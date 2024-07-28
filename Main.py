@@ -10,6 +10,9 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from openpyxl.utils.exceptions import IllegalCharacterError
 
+from gpt_config.openai_setup import initialize_openai
+client = initialize_openai()  # Inicializa OpenAI al principio de la aplicación
+
 # Función para preprocesar y normalizar el texto
 def preprocess_text(text):
     text = text.lower()  # Convertir a minúsculas
@@ -416,3 +419,49 @@ if archivo_subido_1 and archivo_subido_2:
                 file_name="comparison.txt",
                 mime="text/plain"
             )
+
+# --- Sección para la IA ---
+st.markdown("### Chat con IA")
+
+# Inicializar el historial de chat en session_state
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
+
+# Cargar el prompt desde el archivo
+with open("Promptanalisis/promtp.txt", "r") as f:
+    prompt_base = f.read()
+
+# Combinar el texto de ambos documentos (si ya existen)
+if 'text_by_code_1' in locals() and 'text_by_code_2' in locals():
+    texto_documentos = f"Documento Modelo:\n{text_by_code_1}\n\nDocumento Verificación:\n{text_by_code_2}"
+else:
+    texto_documentos = "Aún no se han cargado documentos para analizar." 
+
+# Crear el prompt inicial con el texto de los documentos
+prompt_inicial = prompt_base.format(texto_documentos=texto_documentos)
+st.session_state.chat_history.append({"role": "system", "content": prompt_inicial})
+
+# Mostrar la ventana de chat
+for message in st.session_state.chat_history:
+    with st.chat_message(message["role"]):
+        st.write(message["content"])
+
+# Obtener la pregunta del usuario
+if prompt := st.chat_input("Escribe tu pregunta:"):
+    # Agregar la pregunta al historial de chat
+    st.session_state.chat_history.append({"role": "user", "content": prompt})
+
+    # Llamar a GPT-3
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=st.session_state.chat_history,
+        max_tokens=100,
+        temperature=0.7,
+    )
+
+    # Agregar la respuesta al historial de chat
+    st.session_state.chat_history.append({"role": "assistant", "content": response.choices[0].message.content})
+
+    # Mostrar la respuesta en la ventana de chat
+    with st.chat_message("assistant"):
+        st.write(response.choices[0].message.content) 
