@@ -435,10 +435,18 @@ with open("Promptanalisis/promtp.txt", "r") as f:
 if 'text_by_code_1' in locals() and 'text_by_code_2' in locals():
     texto_documentos = f"Documento Modelo:\n{text_by_code_1}\n\nDocumento Verificación:\n{text_by_code_2}"
 else:
-    texto_documentos = "Aún no se han cargado documentos para analizar." 
+    texto_documentos = "Aún no se han cargado documentos para analizar."
+
+# Crear el diccionario con la información del análisis
+info_analisis = {
+    "texto_documentos": texto_documentos,
+    "tabla_comparacion": comparison_df.to_string(),
+    "codigos_faltantes_modelo": ', '.join(list(all_codes - set(codes_model))),
+    "codigos_faltantes_verificacion": ', '.join(list(all_codes - set(text_by_code_2.keys()))),
+}
 
 # Crear el prompt inicial con el texto de los documentos
-prompt_inicial = prompt_base.format(texto_documentos=texto_documentos)
+prompt_inicial = prompt_base.format(**info_analisis)
 st.session_state.chat_history.append({"role": "system", "content": prompt_inicial})
 
 # Mostrar la ventana de chat
@@ -464,4 +472,4 @@ if prompt := st.chat_input("Escribe tu pregunta:"):
 
     # Mostrar la respuesta en la ventana de chat
     with st.chat_message("assistant"):
-        st.write(response.choices[0].message.content) 
+        st.write(response.choices[0].message.content)
