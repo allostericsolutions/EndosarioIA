@@ -255,7 +255,7 @@ def create_txt(data, code_counts_1, unique_code_count_2):
 st.title("Endosario Móvil")
 
 # Mostrar la imagen al inicio de la aplicación
-image_path = 'interesse.jpg'
+image_path = 'Allosteric_Solutions.png'
 image = Image.open(image_path)
 st.image(image, caption='Interesse', use_column_width=True)
 
