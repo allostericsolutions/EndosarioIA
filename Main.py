@@ -2,16 +2,17 @@ import streamlit as st
 from pdfminer.high_level import extract_text
 from fpdf import FPDF
 import pandas as pd
+import io
 import re
+import difflib
 from PIL import Image
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from openai import OpenAI
+from openpyxl.utils.exceptions import IllegalCharacterError
 from text_processing import extract_and_clean_text
 from file_utils.file_creators import create_excel, create_csv, create_txt
-from gpt_config.openai_setup import initialize_openai
 
-# Inicializar el cliente OpenAI
+from gpt_config.openai_setup import initialize_openai
 client = initialize_openai()
 
 # Función para preprocesar y normalizar el texto
@@ -65,14 +66,19 @@ def calculate_numbers_similarity(nums1, nums2):
             matches += 1
     return (matches / len(nums1_list)) * 100 if nums1_list else 0
 
-# Inicializar el historial de chat en session_state
-if "chat_history" not in st.session_state:
-    st.session_state.chat_history = []
+# Interfaz de usuario de Streamlit
+st.title("Endosario Móvil")
 
-# Subir y analizar los documentos PDF
+# Mostrar la imagen al inicio de la aplicación
+image_path = 'Allosteric_Solutions.png'
+image = Image.open(image_path)
+st.image(image, caption='Interesse', use_column_width=True)
+
+# Subir los dos archivos PDF
 uploaded_file_1 = st.file_uploader("Modelo", type=["pdf"], key="uploader1")
 uploaded_file_2 = st.file_uploader("Verificación", type=["pdf"], key="uploader2")
 
+# Variables para manejar el estado de los archivos subidos
 archivo_subido_1 = False
 archivo_subido_2 = False
 
@@ -88,16 +94,17 @@ if uploaded_file_2:
 if st.button("Reiniciar"):
     archivo_subido_1 = False
     archivo_subido_2 = False
-    st.session_state.chat_history = []
-
-# Mostrar la imagen al inicio de la aplicación
-image_path = 'Allosteric_Solutions.png'
-image = Image.open(image_path)
-st.image(image, caption='Interesse', use_column_width=True)
 
 # Mostrar la sección de comparación de archivos solo si se han subido ambos archivos
 if archivo_subido_1 and archivo_subido_2:
+    # Obtener todos los códigos únicos
     all_codes = set(text_by_code_1.keys()).union(set(text_by_code_2.keys()))
+
+    def handle_long_text(text, length=70):
+        if len(text) > length:
+            return f'<details><summary>Endoso</summary>{text}</details>'
+        else:
+            return text
 
     # Crear la tabla comparativa
     comparison_data = []
@@ -142,7 +149,7 @@ if archivo_subido_1 and archivo_subido_2:
     # Convertir la lista a DataFrame
     comparison_df = pd.DataFrame(comparison_data)
 
-    # Convertir DataFrame a HTML con estilización CSS y HTML modificado
+    # Generar HTML para la tabla
     def generate_html_table(df):
         html = df.to_html(index=False, escape=False, render_links=True)
         html = html.replace(
@@ -181,6 +188,7 @@ if archivo_subido_1 and archivo_subido_2:
 
         return html
 
+    # Convertir DataFrame a HTML con estilización CSS y HTML modificado
     table_html = generate_html_table(comparison_df)
     st.markdown("### Comparación de Documentos")
     st.markdown(table_html, unsafe_allow_html=True)
@@ -224,52 +232,83 @@ if archivo_subido_1 and archivo_subido_2:
                 mime="text/plain"
             )
 
-    # Filtrar códigos presentes en ambos documentos
-    common_codes = list(set(text_by_code_1.keys()).intersection(set(text_by_code_2.keys())))
+    # --- Sección para la IA ---
+    st.markdown("### InteresseAssist Bot")
 
-    # Permitir al usuario seleccionar un código
-    selected_code = st.selectbox("Filtrar códigos presentes en ambos documentos:", common_codes)
+    # Inicializar el historial de chat en session_state
+    if "chat_history" not in st.session_state:
+        st.session_state.chat_history = []
 
+    # Cargar el prompt desde el archivo
+    with open("gpt_config/prompt.txt", "r") as f:
+        prompt_base = f.read()
+
+    # Obtener códigos comunes a ambos documentos
+    filtered_codes = list(set(text_by_code_1.keys()) & set(text_by_code_2.keys()))
+
+    # Filtro de códigos
+    selected_code = st.selectbox("Selecciona un código:", filtered_codes)
+
+    # Mostrar tabla filtrada
     if selected_code:
-        texto_modelo = text_by_code_1.get(selected_code, "Ausente")
-        texto_verificacion = text_by_code_2.get(selected_code, "Ausente")
+        # Filtrar la tabla comparativa
+        comparison_data = [
+            row for row in comparison_data if
+            row["Código"] == f'<b><span style="color:red;">{selected_code}</span></b>'
+        ]
 
-        # Crear el prompt base con los textos correspondientes
-        prompt_base = (
-            f"Documento Modelo:\n{texto_modelo}\n\n"
-            f"Documento Verificación:\n{texto_verificacion}\n\n"
-            "Responde a las preguntas del usuario sobre este análisis de documentos."
-        )
+        comparison_df = pd.DataFrame(comparison_data)
+        table_html = generate_html_table(comparison_df)
+        st.markdown("### Comparación de Documentos (Filtrado)")
+        st.markdown(table_html, unsafe_allow_html=True)
 
-        # Resetear el historial de chat si se selecciona un nuevo código
-        if st.session_state.get("last_selected_code") != selected_code:
-            st.session_state.chat_history = [{"role": "system", "content": prompt_base}]
-            st.session_state.last_selected_code = selected_code
-
-        # Mostrar interacción de chat
+        # Sección para el chat con GPT
         st.markdown("### InteresseAssist Bot")
 
-        # Mostrar historial de chat
+        # Mostrar los textos filtrados de forma oculta
+        texto_modelo = text_by_code_1.get(selected_code, "Ausente")
+        texto_verificacion = text_by_code_2.get(selected_code, "Ausente")
+        with st.expander("Mostrar Textos Filtrados"):
+            st.markdown(f"**Documento Modelo:** {texto_modelo}")
+            st.markdown(f"**Documento Verificación:** {texto_verificacion}")
+
+        # Obtener la fila de la tabla de comparación
+        fila_comparacion = comparison_df.loc[
+            comparison_df["Código"] == f'<b><span style="color:red;">{selected_code}</span></b>']
+
+        # Convertir la fila a un string
+        fila_comparacion_str = fila_comparacion.to_string(index=False, header=False)
+
+        # Crear el prompt inicial con el texto de los documentos
+        info_analisis = {
+            "texto_modelo": texto_modelo,
+            "texto_verificacion": texto_verificacion,
+            "fila_comparacion": fila_comparacion_str,
+        }
+        prompt_final = prompt_base.format(**info_analisis)
+
+        # Mostrar la ventana de chat
         for message in st.session_state.chat_history:
-            st.write(f"{message['role']}: {message['content']}")
+            with st.chat_message(message["role"]):
+                st.write(message["content"])
 
         # Obtener la pregunta del usuario
-        if prompt := st.text_input("Haz tu pregunta:"):
-            # Añadir la pregunta al historial de chat
+        if prompt := st.chat_input("Escribe tu pregunta:"):
+            # Agregar la pregunta al historial de chat
             st.session_state.chat_history.append({"role": "user", "content": prompt})
 
-            # Llamar al modelo GPT-3.5-turbo con el historial de chat actualizado
-            response = client.chat_completions.create(
+            # Llamar a GPT-3 con el prompt final
+            response = client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=st.session_state.chat_history,
                 max_tokens=1000,
                 temperature=0.7,
             )
 
-            # Añadir la respuesta al historial de chat
+            # Agregar la respuesta al historial de chat
             st.session_state.chat_history.append(
-                {"role": "assistant", "content": response.choices[0].message['content']}
-            )
+                {"role": "assistant", "content": response.choices[0].message.content})
 
             # Mostrar la respuesta en la ventana de chat
-            st.write(f"assistant: {response.choices[0].message['content']}")
+            with st.chat_message("assistant"):
+                st.write(response.choices[0].message.content)
