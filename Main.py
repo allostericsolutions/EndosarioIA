@@ -449,12 +449,17 @@ if archivo_subido_1 and archivo_subido_2:
             st.markdown(f"**Documento Modelo:** {texto_modelo}")
             st.markdown(f"**Documento Verificación:** {texto_verificacion}")
 
+        # Obtener la fila de la tabla de comparación
+        fila_comparacion = comparison_df.loc[comparison_df["Código"] == f'<b><span style="color:red;">{selected_code}</span></b>']
+
+        # Convertir la fila a un string
+        fila_comparacion_str = fila_comparacion.to_string(index=False, header=False)
+
         # Crear el prompt inicial con el texto de los documentos
         prompt_final = prompt_base.format(
-            texto_documentos=f"Documento Modelo:\n{texto_modelo}\n\nDocumento Verificación:\n{texto_verificacion}",
-            tabla_comparacion=comparison_df.to_string(),
-            codigos_faltantes_modelo=', '.join(list(all_codes - set(codes_model))),
-            codigos_faltantes_verificacion=', '.join(list(all_codes - set(text_by_code_2.keys()))),
+            texto_modelo=texto_modelo,
+            texto_verificacion=texto_verificacion,
+            fila_comparacion=fila_comparacion_str,  # Agrega la key fila_comparacion
         )
 
         # Mostrar la ventana de chat
