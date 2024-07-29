@@ -11,6 +11,6 @@ Documento Verificación:
 Comparación del Código:
 {fila_comparacion}  
 
-Responde a las preguntas del usuario sobre este análisis de documentos.
+Responde a las preguntas del usuario sobre este análisis de documentos.  Ten en cuenta el contexto de los dos documentos y la información de la comparación para proporcionar respuestas precisas.
 
 Si la información proporcionada no es suficiente para responder a la pregunta, indica que no tienes suficiente información para responder. 
