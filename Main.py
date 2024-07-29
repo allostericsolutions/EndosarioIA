@@ -411,7 +411,7 @@ if archivo_subido_1 and archivo_subido_2:
             )
 
     # --- Sección para la IA ---
-    st.markdown("### Chat con IA")
+    st.markdown("### InteresseAssist Bot")
 
     # Inicializar el historial de chat en session_state
     if "chat_history" not in st.session_state:
@@ -440,13 +440,12 @@ if archivo_subido_1 and archivo_subido_2:
         st.markdown(table_html, unsafe_allow_html=True)
 
         # Sección para el chat con GPT
-        st.markdown("### Chat con IA")
+        st.markdown("### InteresseAssist Bot")
 
-        # Mostrar los textos filtrados
-        texto_modelo = text_by_code_1.get(selected_code, "Ausente")
-        texto_verificacion = text_by_code_2.get(selected_code, "Ausente")
-        st.markdown(f"**Documento Modelo:** {texto_modelo}")
-        st.markdown(f"**Documento Verificación:** {texto_verificacion}")
+        # Mostrar los textos filtrados de forma oculta
+        with st.expander("Mostrar Textos Filtrados"):  # Usa st.expander para esconder el texto
+            st.markdown(f"**Documento Modelo:** {texto_modelo}")
+            st.markdown(f"**Documento Verificación:** {texto_verificacion}")
 
         # Crear el prompt inicial con el texto de los documentos
         prompt_final = prompt_base.format(
