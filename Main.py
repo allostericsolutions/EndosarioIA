@@ -451,7 +451,9 @@ if archivo_subido_1 and archivo_subido_2:
         # Crear el prompt inicial con el texto de los documentos
         prompt_final = prompt_base.format(
             texto_documentos=f"Documento Modelo:\n{texto_modelo}\n\nDocumento Verificación:\n{texto_verificacion}",
-            # ... (resto de la información del análisis)
+            tabla_comparacion=comparison_df.to_string(),
+            codigos_faltantes_modelo=', '.join(list(all_codes - set(codes_model))),
+            codigos_faltantes_verificacion=', '.join(list(all_codes - set(text_by_code_2.keys()))),
         )
 
         # Mostrar la ventana de chat
