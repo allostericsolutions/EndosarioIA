@@ -94,6 +94,7 @@ if uploaded_file_2:
 if st.button("Reiniciar"):
     archivo_subido_1 = False
     archivo_subido_2 = False
+    st.session_state.chat_history = []
 
 # Mostrar la sección de comparación de archivos solo si se han subido ambos archivos
 if archivo_subido_1 and archivo_subido_2:
@@ -238,6 +239,8 @@ if archivo_subido_1 and archivo_subido_2:
     # Inicializar el historial de chat en session_state
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = []
+    if "analysis_loaded" not in st.session_state:
+        st.session_state.analysis_loaded = False
 
     # Cargar el prompt desde el archivo
     with open("gpt_config/prompt.txt", "r") as f:
@@ -249,21 +252,9 @@ if archivo_subido_1 and archivo_subido_2:
     # Filtro de códigos
     selected_code = st.selectbox("Selecciona un código:", filtered_codes)
 
-    # Mostrar tabla filtrada
     if selected_code:
-        # Filtrar la tabla comparativa
-        comparison_data = [
-            row for row in comparison_data if
-            row["Código"] == f'<b><span style="color:red;">{selected_code}</span></b>'
-        ]
-
-        comparison_df = pd.DataFrame(comparison_data)
-        table_html = generate_html_table(comparison_df)
-        st.markdown("### Comparación de Documentos (Filtrado)")
-        st.markdown(table_html, unsafe_allow_html=True)
-
-        # Sección para el chat con GPT
-        st.markdown("### InteresseAssist Bot")
+        # Sección para el chat con GPT para cargar el análisis de documentos
+        st.markdown("### Cargar Análisis de Documentos")
 
         # Mostrar los textos filtrados de forma oculta
         texto_modelo = text_by_code_1.get(selected_code, "Ausente")
@@ -272,33 +263,35 @@ if archivo_subido_1 and archivo_subido_2:
             st.markdown(f"**Documento Modelo:** {texto_modelo}")
             st.markdown(f"**Documento Verificación:** {texto_verificacion}")
 
-        # Obtener la fila de la tabla de comparación
-        fila_comparacion = comparison_df.loc[
-            comparison_df["Código"] == f'<b><span style="color:red;">{selected_code}</span></b>']
-
-        # Convertir la fila a un string
-        fila_comparacion_str = fila_comparacion.to_string(index=False, header=False)
-
         # Crear el prompt inicial con el texto de los documentos
         info_analisis = {
             "texto_modelo": texto_modelo,
             "texto_verificacion": texto_verificacion,
-            "fila_comparacion": fila_comparacion_str,
+            "fila_comparacion": "",  # No se necesita en este caso
         }
         prompt_final = prompt_base.format(**info_analisis)
 
+        # Iniciar chat para cargar
+        if st.button("Enviar para Análisis"):
+            st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
+            st.session_state.analysis_loaded = True
+
+    # Verificar si el análisis ha sido cargado
+    if st.session_state.analysis_loaded:
+        st.markdown("### Interactuar con InteresseAssist Bot")
+
         # Mostrar la ventana de chat
-        for message in st.session_state.chat_history:
+        for idx, message in enumerate(st.session_state.chat_history):
             with st.chat_message(message["role"]):
                 st.write(message["content"])
 
         # Obtener la pregunta del usuario
-        if prompt := st.chat_input("Escribe tu pregunta:"):
+        if prompt := st.chat_input("Haz tu pregunta:"):
             # Agregar la pregunta al historial de chat
             st.session_state.chat_history.append({"role": "user", "content": prompt})
 
-            # Llamar a GPT-3 con el prompt final
-            response = client.chat.completions.create(
+            # Llamar a GPT-3 con el historial de chat
+            response = client.chat_completions.create(
                 model="gpt-3.5-turbo",
                 messages=st.session_state.chat_history,
                 max_tokens=1000,
@@ -307,8 +300,9 @@ if archivo_subido_1 and archivo_subido_2:
 
             # Agregar la respuesta al historial de chat
             st.session_state.chat_history.append(
-                {"role": "assistant", "content": response.choices[0].message.content})
+                {"role": "assistant", "content": response.choices[0].message["content"]}
+            )
 
             # Mostrar la respuesta en la ventana de chat
             with st.chat_message("assistant"):
-                st.write(response.choices[0].message.content)
+                st.write(response.choices[0].message["content"])
