@@ -94,6 +94,8 @@ if uploaded_file_2:
 if st.button("Reiniciar"):
     archivo_subido_1 = False
     archivo_subido_2 = False
+    st.session_state.chat_history = []
+    st.session_state.analysis_loaded = False
 
 # Mostrar la sección de comparación de archivos solo si se han subido ambos archivos
 if archivo_subido_1 and archivo_subido_2:
@@ -279,8 +281,12 @@ if archivo_subido_1 and archivo_subido_2:
     if st.session_state.analysis_loaded:
         st.markdown("### Interactuar con InteresseAssist Bot")
 
-        # Mostrar la ventana de chat
-        for idx, message in enumerate(st.session_state.chat_history):
+        # Botón para limpiar la conversación
+        if st.button("Limpiar Conversación"):
+            st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
+
+        # Mostrar la ventana de chat excluyendo el prompt del sistema
+        for idx, message in enumerate(st.session_state.chat_history[1:]):
             with st.chat_message(message["role"]):
                 st.write(message["content"])
 
