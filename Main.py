@@ -443,6 +443,8 @@ if archivo_subido_1 and archivo_subido_2:
         st.markdown("### InteresseAssist Bot")
 
         # Mostrar los textos filtrados de forma oculta
+        texto_modelo = text_by_code_1.get(selected_code, "Ausente")
+        texto_verificacion = text_by_code_2.get(selected_code, "Ausente")
         with st.expander("Mostrar Textos Filtrados"):  # Usa st.expander para esconder el texto
             st.markdown(f"**Documento Modelo:** {texto_modelo}")
             st.markdown(f"**Documento Verificación:** {texto_verificacion}")
