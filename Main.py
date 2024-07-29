@@ -6,6 +6,8 @@ from utils import preprocess_text, clean_text  # Importa las funciones generales
 from gpt_config.openai_setup import initialize_openai
 import re
 from PIL import Image 
+import pandas as pd
+import io
 
 client = initialize_openai()  # Inicializa OpenAI al principio de la aplicación
 
