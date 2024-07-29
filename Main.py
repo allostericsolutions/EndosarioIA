@@ -421,45 +421,60 @@ if archivo_subido_1 and archivo_subido_2:
     with open("gpt_config/prompt.txt", "r") as f:
         prompt_base = f.read()
 
-    # Combinar el texto de ambos documentos (si ya existen)
-    if 'text_by_code_1' in locals() and 'text_by_code_2' in locals():
-        texto_documentos = f"Documento Modelo:\n{text_by_code_1}\n\nDocumento Verificación:\n{text_by_code_2}"
-    else:
-        texto_documentos = "Aún no se han cargado documentos para analizar."
+    # Obtener códigos comunes a ambos documentos
+    filtered_codes = list(set(text_by_code_1.keys()) & set(text_by_code_2.keys()))
 
-    # Crear el diccionario con la información del análisis
-    info_analisis = {
-        "texto_documentos": texto_documentos,
-        "tabla_comparacion": comparison_df.to_string(),
-        "codigos_faltantes_modelo": ', '.join(list(all_codes - set(codes_model))),
-        "codigos_faltantes_verificacion": ', '.join(list(all_codes - set(text_by_code_2.keys()))),
-    }
+    # Filtro de códigos
+    selected_code = st.selectbox("Selecciona un código:", filtered_codes)  # Lista desplegable
+    
+    # Mostrar tabla filtrada
+    if selected_code:
+        # Filtrar la tabla comparativa
+        comparison_data = [
+            row for row in comparison_data if row["Código"] == f'<b><span style="color:red;">{selected_code}</span></b>'
+        ]
 
-    # Crear el prompt inicial con el texto de los documentos
-    prompt_final = prompt_base.format(**info_analisis)
-    st.session_state.chat_history.append({"role": "system", "content": prompt_final})
+        comparison_df = pd.DataFrame(comparison_data)
+        table_html = generate_html_table(comparison_df)
+        st.markdown("### Comparación de Documentos (Filtrado)")
+        st.markdown(table_html, unsafe_allow_html=True)
 
-    # Mostrar la ventana de chat
-    for message in st.session_state.chat_history:
-        with st.chat_message(message["role"]):
-            st.write(message["content"])
+        # Sección para el chat con GPT
+        st.markdown("### Chat con IA")
 
-    # Obtener la pregunta del usuario
-    if prompt := st.chat_input("Escribe tu pregunta:"):
-        # Agregar la pregunta al historial de chat
-        st.session_state.chat_history.append({"role": "user", "content": prompt})
+        # Mostrar los textos filtrados
+        texto_modelo = text_by_code_1.get(selected_code, "Ausente")
+        texto_verificacion = text_by_code_2.get(selected_code, "Ausente")
+        st.markdown(f"**Documento Modelo:** {texto_modelo}")
+        st.markdown(f"**Documento Verificación:** {texto_verificacion}")
 
-        # Llamar a GPT-3 con el prompt final
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=st.session_state.chat_history,
-            max_tokens=1000,
-            temperature=0.7,
+        # Crear el prompt inicial con el texto de los documentos
+        prompt_final = prompt_base.format(
+            texto_documentos=f"Documento Modelo:\n{texto_modelo}\n\nDocumento Verificación:\n{texto_verificacion}",
+            # ... (resto de la información del análisis)
         )
 
-        # Agregar la respuesta al historial de chat
-        st.session_state.chat_history.append({"role": "assistant", "content": response.choices[0].message.content})
+        # Mostrar la ventana de chat
+        for message in st.session_state.chat_history:
+            with st.chat_message(message["role"]):
+                st.write(message["content"])
 
-        # Mostrar la respuesta en la ventana de chat
-        with st.chat_message("assistant"):
-            st.write(response.choices[0].message.content) 
+        # Obtener la pregunta del usuario
+        if prompt := st.chat_input("Escribe tu pregunta:"):
+            # Agregar la pregunta al historial de chat
+            st.session_state.chat_history.append({"role": "user", "content": prompt})
+
+            # Llamar a GPT-3 con el prompt final
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=st.session_state.chat_history,
+                max_tokens=1000,
+                temperature=0.7,
+            )
+
+            # Agregar la respuesta al historial de chat
+            st.session_state.chat_history.append({"role": "assistant", "content": response.choices[0].message.content})
+
+            # Mostrar la respuesta en la ventana de chat
+            with st.chat_message("assistant"):
+                st.write(response.choices[0].message.content) 
