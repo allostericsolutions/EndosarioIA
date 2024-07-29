@@ -94,7 +94,6 @@ if uploaded_file_2:
 if st.button("Reiniciar"):
     archivo_subido_1 = False
     archivo_subido_2 = False
-    st.session_state.chat_history = []
 
 # Mostrar la sección de comparación de archivos solo si se han subido ambos archivos
 if archivo_subido_1 and archivo_subido_2:
