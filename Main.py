@@ -1,7 +1,8 @@
-import streamlit as st
+mport streamlit as st
 from pdfminer.high_level import extract_text
 from fpdf import FPDF
 import pandas as pd
+import re
 from PIL import Image
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -149,7 +150,7 @@ if archivo_subido_1 and archivo_subido_2:
             with st.chat_message("assistant"):
                 st.write(response.choices[0].message['content'])
 
-# Resto de las funcionalidades de generación y comparación de tablas
+# Funciones adicionales no relacionadas con GPT
 def handle_long_text(text, length=70):
     if len(text) > length:
         return f'<details><summary>Endoso</summary>{text}</details>'
