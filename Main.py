@@ -5,165 +5,32 @@ import pandas as pd
 import io
 import re
 import difflib
-from PIL import Image  # Para trabajar con imágenes
+from PIL import Image
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from openpyxl.utils.exceptions import IllegalCharacterError
+from text_processing import extract_and_clean_text  # Importación de la función
 
 from gpt_config.openai_setup import initialize_openai
 client = initialize_openai()  # Inicializa OpenAI al principio de la aplicación
 
 # Función para preprocesar y normalizar el texto
 def preprocess_text(text):
-    text = text.lower()  # Convertir a minúsculas
-    text = re.sub(r'[^\w\s.]', '', text)  # Eliminar puntuación excepto puntos
-    text = re.sub(r'\s+', ' ', text).strip()  # Reemplazar múltiples espacios por uno y quitar espacios al inicio y final
+    text = text.lower()
+    text = re.sub(r'[^\w\s.]', '', text)
+    text = re.sub(r'\s+', ' ', text).strip()
     return text
 
-# Función para calcular la similitud semántica entre dos textos usando TF-IDF y Cosine Similarity
+# Función para calcular la similitud semántica
 def calculate_semantic_similarity(text1, text2):
-    # Preprocesar los textos
     text1 = preprocess_text(text1)
     text2 = preprocess_text(text2)
 
-    # Vectorizar los textos
     vectorizer = TfidfVectorizer().fit_transform([text1, text2])
     vectors = vectorizer.toarray()
 
-    # Calcular la similitud coseno
     cosine_sim = cosine_similarity(vectors)
-
     return cosine_sim[0, 1] * 100
-
-# Función para extraer y limpiar el texto del PDF
-def extract_and_clean_text(pdf_path):
-    raw_text = extract_text(pdf_path)
-
-    patterns_to_remove = [
-        r'HOJA\s*:\s*\d+',
-        r'G\.M\.M\. GRUPO PROPIA MEDICALIFE', 
-        r'02001\/M\d+',
-        r'CONTRATANTE:\s*GBM\s*GRUPO\s*BURSATIL\s*MEXICANO,\s*S\.A\. DE C\.V\. CASA DE BOLSA', 
-        r'GO\-2\-021', 
-        r'\bCONDICION\s*:\s*',
-        r'MODIFICACIONES\s*A\s*DEFINICIONES\s*PERIODO\s*DE\s*GRACIA',
-        r'MODIFICACIONES\s*A\s*DEFINICIONES',
-        r'MODIFICACIONES\s*A\s*DEFINICIONES',
-        r'MODIFICACIONES',
-        r'MODIFICACIONES\s*A\s*OTROS',
-        r'A\s*CLAUSULAS\s*GENERALES\s*PAGO\s*DE\s*COMPLEMENTOS\s*ANTERIORES',
-        r'A\s*GASTOS\s*CUBIERTOS\s*MATERNIDAD',
-        r'A\s*EXCLUSIONES\s*MOTOCICLISMO',
-        r'A\s*CLAUSULAS\s*ADICIONALES\s*OPCIO\s*CORRECCION\s*DE\s*LA\s*VISTA',
-        r'A\s*GASTOS\s*CUBIERTOS\s*MATERNIDAD',
-        r'A\s*EXCLUSIONES\s*MOTOCICLISMO',
-        r'A\s*OTROS\s*HALLUX\s*VALGUS',
-        r'A\s*GASTOS\s*CUBIERTOS\s*COBERTURA\s*DE\s*INFECCION\s*VIH\s*Y\/O\s*SIDA',
-        r'A\s*GASTOS\s*CUBIERTOS\s*GASTOS\s*DEL\s*DONADOR\s*DE\s*ÓRGANOS\s*EN\s*TRASPLANTE',
-        r'A\s*CLAUSULAS\s*GENERALES\s*MOVIMIENTOS\s*DE\s*ASEGURADOS\s*AUTOADMINISTRADA\s*\(INICIO\s*vs\s*RENOVACION\)', 
-        r'A\s*GASTOS\s*CUBIERTOS\s*PADECIMIENTOS\s*CONGENITOS',
-        r'A\s*GASTOS\s*CUBIERTOS\s*HONORARIOS\s*MÉDICOS\s*Y\/O\s*QUIRÚRGICOS',
-        r'A\s*GASTOS\s*CUBIERTOS\s*PADECIMIENTOS\s*PREEXISTENTES',
-        r'A\s*GASTOS\s*CUBIERTOS\s*TRATAMIENTOS\s*DE\s*REHABILITACION',
-        r'A\s*DEDUCIBLE\s*Y\s*COASEGURO\s*APLICACION\s*DE\s*DEDUCIBLE\s*Y\s*COASEGURO',
-        r'A\s*GASTOS\s*CUBIERTOS\s*CIRCUNCISION\s*NO\s*PROFILACTICA',
-        r'A\s*CLAUSULAS\s*ADICIONALES\s*OPCIO\s*CLAUSULA\s*DE\s*EMERGENCIA\s*EN\s*EL\s*EXTRANJERO',
-        r'A\s*CLAUSULAS\s*ADICIONALES\s*OPCIO\s*CORRECCION\s*DE\s*LA\s*VISTA',
-        r'EXCLUSION\s*PRESTADORES\s*DE\s*SERVICIOS\s*MEDICOS\s*NO\s*RECONOCIDOS,\s*FUERA\s*DE\s*CONVENIO',
-        r'EXCLUSIN\s*PRESTADORES\s*DE\s*SERVICIOS\s*MEDICOS\s*NO\s*RECONOCIDOS,\s*FUERA\s*DE\s*CONVENIO',
-        r'EXCLUSIN\s*PRESTADORES\s*DE\s*SERVICIOS\s*MEDICOS\s*NO\s*RECONOCIDOS,\s*FUERA\s*DE\s*CONVENIO',
-        r'EXCLUSIÓN\s*PRESTADORES\s*DE?\s*SERVICIOS\s*MEDICOS\s*NO\s*RECONOCIDOS,\s*FUERA\s*DE\s*CONVENIO',
-        r'CON\s*PERIODO\s*DE\s*ESPERA',
-        r'A\s*GASTOS\s*CUBIERTOS\s*CIRUGIA\s*DE\s*NARIZ\s*Y\s*SENOS\s*PARANASALES',
-        r'A\s*OTROS\s*FRANJA\s*FRONTERIZA',
-        r'RAZON\s*SOCIAL\s*DEL\s*CONTRATANTE',
-        r'A\s*OTROS\s*CONVERSION\s*INDIVIDUAL\s*PARA\s*EL\s*SUBGRUPO1',
-        r'A\s*GASTOS\s*CUBIERTOS\s*HERNIAS',
-        r'A\s*GASTOS\s*CUBIERTOS\s*COBERTURA\s*DE\s*DAO\s*PSIQUIATRICO',
-        r'A\s*GASTOS\s*CUBIERTOS\s*CIRCUNCISION',
-        r'A\s*OTROS\s*REGISTRO\s*DE\s*CONDICIONES\s*GENERALES',
-        r'A\s*OTROS\s*PADECIMIENTOS\s*CON\s*PERIODO\s*DE\s*ESPERA',
-        r'A\s*GASTOS\s*CUBIERTOS\s*HONORARIOS\s*POR\s*CONSULTAS\s*MEDICAS',
-        r'A\s*OTROS\s*LITOTRIPSIAS',
-        r'A\s*EXCLUSIONES\s*RECIEN\s*NACIDO\s*SANO',
-        r'A\s*OTROS\s*COLUMNA',
-        r'O\s*JUANETES',
-        r'ACCIDENTE',
-        r'A\s*EXCLUSIONES\s*LEGRADO\s*POR\s*ABORTO',
-        r'A\s*EXCLUSIONES\s*AVIACION\s*PARTICULAR',
-        r'A\s*EXCLUSIONES\s*ASALTO',
-        r'A\s*GASTOS\s*CUBIERTOS\s*TRANSPLANTE\s*DE\s*ORGANOS',
-        r'EXCLUSIN\s*PRESTADORES\s*DE\s*SERVICIOS\s*MEDICOS\s*NO RECONOCIDOS,\s*FUERA\s*DE CONVENIO',
-        r'EXCLUSION\s*PRESTADORES\s*DE\s*SERVICIOS\s*MEDICOS\s*NO\s*RECONOCIDOS,\s*FUERA\s*DE\s*CONVENIO',
-        r'A\s*GASTOS\s*CUBIERTOS\s*RECIEN\s*NACIDO\s*PREMATURO',
-        r'COBERTURA\s*DE\s*DAO\s*PSIQUIATRICO',
-        r'REGISTRO\s*DE\s*CONDICIONES\s*GENERALES',
-        r'CLNICA\s*DE\s*LA\s*COLUMNA',
-        r'CLÍNICA\s*DE\s*LA\s*COLUMNA',
-        r'HERNIAS',
-        r'A\s*OTROS\s*PADECIMIENTOS',
-        r'A\s*GASTOS\s*CUBIERTOS\s*HONORARIOS\s*POR\s*CONSULTA\s*Y\s*PROCEDIMIENTOS\s*QUIRURGICOS',
-        r'A\s*OTROS\s*CLNICA\s*DE\s*LA\s*COLUMNA',
-        r'MODIFICACIONES\s*A\s*DEFINICIONES',
-        r'EXCLUSIÓN\s*PRESTADORES\s*DE\s*SERVICIOS\s*MEDICOS\s*NO\s*RECONOCIDOS,\s*FUERA\s*DE\s*CONVENIO',
-        r'A\s*OTROS\s*ENDOSO\s*DE\s*CONTINUIDAD\s*DE\s*NEGOCIO\s*POR\s*RENOVACIÓN',
-        r'MODIFICACIONES\s*A\s*GASTOS\s*CUBIERTOS\s*HONORARIOS\s*POR\s*CONSULTAS\s*MÉDICAS',
-        r'MODIFICACIONES\s*A\s*GASTOS\s*CUBIERTOS\s*PADECIMIENTOS\s*PREEXISTENTES\s*CON\s*PERIODO\s*DE\s*ESPERA',
-        r'MODIFICACIONES\s*A\s*OTROS\s*ESTRABISMO',
-        r'A\s*EXCLUSIONES\s*DEPORTES\s*PELIGROSOS',
-        r'A\s*EXCLUSIONES\s*AMPLIACION\s*COBERTURA\s*DE\s*S',
-        r'A\s*EXCLUSIONES\s*MENOPAUSIA',
-        r'A\s*OTROS\s*LESIONES\s*PIGMENTARIAS\s*Y\s*LUNARES',
-        r'A\s*OTROS\s*ACNÉ',
-        r'A\s*GASTOS\s*CUBIERTOS\s*COBERTURA\s*DE\s*DAÑO\s*PSIQUIATRICO',
-        r'A\s*OTROS\s*AMIGDALAS\s*Y\s*ADENOIDES',
-        r'A\s*GASTOS\s*CUBIERTOS\s*MEDICAMENTOS',
-        r'A\s*EXCLUSIONES\s*ACUPUNTURISTAS',
-        r'A\s*EXCLUSIONES\s*VITAMINAS\s*Y\s*COMPLEMENTOS\s*ALIMENTICIOS',
-        r'MODIFICACIONES\s*A\s*GASTOS\s*CUBIERTOS',
-        r'HONORARIOS\s*POR\s*CONSULTAS\s*MÉDICAS',
-        r'HONORARIOS\s*POR\s*CONSULTAS\s*MEDICAS',
-        r'A\s*GASTOS',
-        r'HONORARIOS',
-        r'POR\s*CONSULTAS',
-        r'CUBIERTOS',
-        r'GASTOS',
-        r'ESTRBISMO',
-        r'OTROS',
-    ]
-
-    # Eliminar solo si la frase está completamente en mayúsculas
-    for pattern in patterns_to_remove:
-        raw_text = re.sub(pattern, '', raw_text)
-
-    # Eliminar la parte en mayúsculas entre comillas
-    raw_text = re.sub(r'"\s*[A-Z\s]+\s*"\s*', '', raw_text)
-
-    # Agrupar y resaltar códigos alfanuméricos
-    code_pattern = r'\b[A-Z]{2}\.\d{3}\.\d{3}\b'
-    text_by_code = {}
-    paragraphs = raw_text.split('\n')
-    current_code = None
-    
-    # Contar códigos por documento (únicos)
-    code_counts = set()
-
-    for paragraph in paragraphs:
-        code_match = re.search(code_pattern, paragraph)
-        if code_match:
-            current_code = code_match.group(0)
-            paragraph = re.sub(code_pattern, '', paragraph).strip()
-
-            if current_code not in text_by_code:
-                text_by_code[current_code] = paragraph
-            else:
-                text_by_code[current_code] += " " + paragraph
-
-            code_counts.add(current_code)
-        elif current_code:
-            text_by_code[current_code] += " " + paragraph
-
-    return text_by_code, len(code_counts), list(code_counts)  # Devolver el conteo de códigos únicos
 
 # Función para limpiar caracteres ilegales
 def clean_text(text):
@@ -178,7 +45,7 @@ def get_asterisks(similarity_percentage):
     else:
         return "**"  # Dos asteriscos para <= 89%
 
-# Función para extraer y alinear los números y su contexto
+# Función para extraer y alinear números con contexto
 def extract_and_align_numbers_with_context(text1, text2, context_size=30):
     def extract_numbers_with_context(text):
         matches = re.finditer(r'\b\d+\b', text)
@@ -201,7 +68,7 @@ def extract_and_align_numbers_with_context(text1, text2, context_size=30):
 
     return ' '.join(nums1) if nums1 else 'N/A', ' '.join(context1) if context1 else 'N/A', ' '.join(nums2) if nums2 else 'N/A', ' '.join(context2) if context2 else 'N/A'
 
-# Función para calcular la similitud de los números
+# Función para calcular la similitud de números
 def calculate_numbers_similarity(nums1, nums2):
     nums1_list = nums1.split()
     nums2_list = nums2.split()
@@ -300,7 +167,7 @@ if archivo_subido_1 and archivo_subido_2:
         else:
             sim_percentage = calculate_semantic_similarity(doc1_text, doc2_text)
             similarity_str = f'{sim_percentage:.2f}%'
-        
+
         # Si un número no está presente, el porcentaje de similitud numérica es 0
         if doc1_text == "Ausente" or doc2_text == "Ausente":
             num_similarity_percentage = 0
@@ -310,14 +177,14 @@ if archivo_subido_1 and archivo_subido_2:
             doc1_num, doc1_context, doc2_num, doc2_context = extract_and_align_numbers_with_context(doc1_text, doc2_text)
             doc1_num_display = f'<details><summary>{doc1_num}</summary><p>{doc1_context}</p></details>'
             doc2_num_display = f'<details><summary>{doc2_num}</summary><p>{doc2_context}</p></details>'
-            
+
             num_similarity_percentage = calculate_numbers_similarity(doc1_num, doc2_num)
 
         row = {
             "Código": f'<b><span style="color:red;">{code}</span></b>',
-            "Documento Modelo": doc1_text_display if doc1_text != "Ausente" else f'<b style="color:red;">Ausente</b>',  # Estilo para Ausente
+            "Documento Modelo": doc1_text_display if doc1_text != "Ausente" else f'<b style="color:red;">Ausente</b>',
             "Valores numéricos Modelo": f'<details><summary>Contexto</summary>{doc1_num_display}</details>',
-            "Documento Verificación": doc2_text_display if doc2_text != "Ausente" else f'<b style="color:red;">Ausente</b>',  # Estilo para Ausente
+            "Documento Verificación": doc2_text_display if doc2_text != "Ausente" else f'<b style="color:red;">Ausente</b>',
             "Valores numéricos Verificación": f'<details><summary>Contexto</summary>{doc2_num_display}</details>',
             "Similitud Texto": similarity_str,
             "Similitud Numérica": f'{num_similarity_percentage:.2f}%'
@@ -327,9 +194,9 @@ if archivo_subido_1 and archivo_subido_2:
     # Convertir la lista a DataFrame
     comparison_df = pd.DataFrame(comparison_data)
 
-    # Generar HTML para la tabla con títulos de columnas fijos y estilización adecuada
+    # Generar HTML para la tabla
     def generate_html_table(df):
-        html = df.to_html(index=False, escape=False, render_links=True)  # render_links=True para estilos CSS
+        html = df.to_html(index=False, escape=False, render_links=True)
         html = html.replace(
             '<table border="1" class="dataframe">',
             '<table border="1" class="dataframe" style="width:100%; border-collapse:collapse;">'
@@ -355,7 +222,6 @@ if archivo_subido_1 and archivo_subido_2:
         )
 
         # Agrega estilos CSS para las celdas de similitud numérica
-        # Convierte la columna "Similitud Numérica" a float
         df["Similitud Numérica"] = df["Similitud Numérica"].str.rstrip('%').astype(float)
         df["Similitud Numérica"] = df["Similitud Numérica"].apply(lambda x: f"{x:.2f}% {get_asterisks(x)}")
 
@@ -378,11 +244,11 @@ if archivo_subido_1 and archivo_subido_2:
     st.write(f"**Documento Verificación:** {unique_code_count_2} (Faltan: {', '.join(list(all_codes - set(text_by_code_2.keys())))})")
 
     # Botones para descargar los archivos
-    col1, col2, col3 = st.columns(3)  # Tres columnas para botones
+    col1, col2, col3 = st.columns(3)
     with col1:
         download_excel = st.button("Download Comparison Excel")
         if download_excel:
-            excel_buffer = create_excel(comparison_df) 
+            excel_buffer = create_excel(comparison_df)
             st.download_button(
                 label="Descarga Excel",
                 data=excel_buffer,
@@ -402,7 +268,7 @@ if archivo_subido_1 and archivo_subido_2:
     with col3:
         download_txt = st.button("Download Comparison TXT")
         if download_txt:
-            txt_buffer = create_txt(comparison_df, unique_code_count_1, unique_code_count_2)  # Pasa los datos necesarios
+            txt_buffer = create_txt(comparison_df, unique_code_count_1, unique_code_count_2)
             st.download_button(
                 label="Descarga TXT",
                 data=txt_buffer,
@@ -425,8 +291,8 @@ if archivo_subido_1 and archivo_subido_2:
     filtered_codes = list(set(text_by_code_1.keys()) & set(text_by_code_2.keys()))
 
     # Filtro de códigos
-    selected_code = st.selectbox("Selecciona un código:", filtered_codes)  # Lista desplegable
-    
+    selected_code = st.selectbox("Selecciona un código:", filtered_codes)
+
     # Mostrar tabla filtrada
     if selected_code:
         # Filtrar la tabla comparativa
@@ -445,7 +311,7 @@ if archivo_subido_1 and archivo_subido_2:
         # Mostrar los textos filtrados de forma oculta
         texto_modelo = text_by_code_1.get(selected_code, "Ausente")
         texto_verificacion = text_by_code_2.get(selected_code, "Ausente")
-        with st.expander("Mostrar Textos Filtrados"):  # Usa st.expander para esconder el texto
+        with st.expander("Mostrar Textos Filtrados"):
             st.markdown(f"**Documento Modelo:** {texto_modelo}")
             st.markdown(f"**Documento Verificación:** {texto_verificacion}")
 
@@ -459,7 +325,7 @@ if archivo_subido_1 and archivo_subido_2:
         info_analisis = {
             "texto_modelo": texto_modelo,
             "texto_verificacion": texto_verificacion,
-            "fila_comparacion": fila_comparacion_str,  # Agrega la key fila_comparacion
+            "fila_comparacion": fila_comparacion_str,
         }
         prompt_final = prompt_base.format(**info_analisis)
 
@@ -486,4 +352,4 @@ if archivo_subido_1 and archivo_subido_2:
 
             # Mostrar la respuesta en la ventana de chat
             with st.chat_message("assistant"):
-                st.write(response.choices[0].message.content) 
+                st.write(response.choices[0].message.content)
