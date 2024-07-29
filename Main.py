@@ -97,106 +97,6 @@ st.image(image, caption='Interesse', use_column_width=True)
 
 # Mostrar la sección de comparación de archivos solo si se han subido ambos archivos
 if archivo_subido_1 and archivo_subido_2:
-    
-    # Obtener todos los códigos únicos
-    all_codes = list(set(text_by_code_1.keys()).union(set(text_by_code_2.keys())))
-
-    # Permitir al usuario seleccionar un código
-    selected_code = st.selectbox("Selecciona un código:", all_codes)
-
-    if selected_code:
-        texto_modelo = text_by_code_1.get(selected_code, "Ausente")
-        texto_verificacion = text_by_code_2.get(selected_code, "Ausente")
-
-        # Crear el prompt base con los textos correspondientes
-        prompt_base = (
-            f"Documento Modelo:\n{texto_modelo}\n\n"
-            f"Documento Verificación:\n{texto_verificacion}\n\n"
-            "Responde a las preguntas del usuario sobre este análisis de documentos."
-        )
-
-        # Resetear el historial de chat si se selecciona un nuevo código
-        if st.session_state.get("last_selected_code") != selected_code:
-            st.session_state.chat_history = [{"role": "system", "content": prompt_base}]
-            st.session_state.last_selected_code = selected_code
-
-        # Mostrar interacción de chat
-        st.markdown("### InteresseAssist Bot")
-
-        # Mostrar historial de chat
-        for message in st.session_state.chat_history:
-            with st.chat_message(message["role"]):
-                st.write(message["content"])
-
-        # Obtener la pregunta del usuario
-        if prompt := st.chat_input("Haz tu pregunta:"):
-            # Añadir la pregunta al historial de chat
-            st.session_state.chat_history.append({"role": "user", "content": prompt})
-
-            # Llamar al modelo GPT-3.5-turbo con el historial de chat actualizado
-            response = client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=st.session_state.chat_history,
-                max_tokens=1000,
-                temperature=0.7,
-            )
-
-            # Añadir la respuesta al historial de chat
-            st.session_state.chat_history.append(
-                {"role": "assistant", "content": response.choices[0].message['content']}
-            )
-
-            # Mostrar la respuesta en la ventana de chat
-            with st.chat_message("assistant"):
-                st.write(response.choices[0].message['content'])
-
-# Funciones adicionales no relacionadas con GPT
-def handle_long_text(text, length=70):
-    if len(text) > length:
-        return f'<details><summary>Endoso</summary>{text}</details>'
-    else:
-        return text
-
-def generate_html_table(df):
-    html = df.to_html(index=False, escape=False, render_links=True)
-    html = html.replace(
-        '<table border="1" class="dataframe">',
-        '<table border="1" class="dataframe" style="width:100%; border-collapse:collapse;">'
-    ).replace(
-        '<thead>',
-        '<thead style="position: sticky; top: 0; z-index: 1; background: #fff;">'
-    ).replace(
-        '<th>',
-        '<th class="fixed-width" style="background-color:#f2f2f2; padding:10px; text-align:left; z-index: 1;">'
-    ).replace(
-        '<td>',
-        '<td class="fixed-width" style="border:1px solid black; padding:10px; text-align:left; vertical-align:top;">'
-    )
-
-    # Aplica estilos a "Documento Modelo" y "Documento Verificación"
-    html = html.replace(
-        '<th>Documento Modelo</th>',
-        '<th style="font-size: 20px; font-weight: bold;">Documento Modelo</th>'
-    )
-    html = html.replace(
-        '<th>Documento Verificación</th>',
-        '<th style="font-size: 20px; font-weight: bold;">Documento Verificación</th>'
-    )
-
-    # Agrega estilos CSS para las celdas de similitud numérica
-    df["Similitud Numérica"] = df["Similitud Numérica"].str.rstrip('%').astype(float)
-    df["Similitud Numérica"] = df["Similitud Numérica"].apply(lambda x: f"{x:.2f}%")
-
-    for i, row in df.iterrows():
-        html = html.replace(
-            f'<td class="fixed-width" style="border:1px solid black; padding:10px; text-align:left; vertical-align:top;">{row["Similitud Numérica"]}%</td>',
-            f'<td class="fixed-width" style="border:1px solid black; padding:10px; text-align:left; vertical-align:top;">{row["Similitud Numérica"]}</td>'
-        )
-
-    return html
-
-if archivo_subido_1 and archivo_subido_2:
-    # Obtener todos los códigos únicos
     all_codes = set(text_by_code_1.keys()).union(set(text_by_code_2.keys()))
 
     # Crear la tabla comparativa
@@ -243,6 +143,44 @@ if archivo_subido_1 and archivo_subido_2:
     comparison_df = pd.DataFrame(comparison_data)
 
     # Convertir DataFrame a HTML con estilización CSS y HTML modificado
+    def generate_html_table(df):
+        html = df.to_html(index=False, escape=False, render_links=True)
+        html = html.replace(
+            '<table border="1" class="dataframe">',
+            '<table border="1" class="dataframe" style="width:100%; border-collapse:collapse;">'
+        ).replace(
+            '<thead>',
+            '<thead style="position: sticky; top: 0; z-index: 1; background: #fff;">'
+        ).replace(
+            '<th>',
+            '<th class="fixed-width" style="background-color:#f2f2f2; padding:10px; text-align:left; z-index: 1;">'
+        ).replace(
+            '<td>',
+            '<td class="fixed-width" style="border:1px solid black; padding:10px; text-align:left; vertical-align:top;">'
+        )
+
+        # Aplica estilos a "Documento Modelo" y "Documento Verificación"
+        html = html.replace(
+            '<th>Documento Modelo</th>',
+            '<th style="font-size: 20px; font-weight: bold;">Documento Modelo</th>'
+        )
+        html = html.replace(
+            '<th>Documento Verificación</th>',
+            '<th style="font-size: 20px; font-weight: bold;">Documento Verificación</th>'
+        )
+
+        # Agrega estilos CSS para las celdas de similitud numérica
+        df["Similitud Numérica"] = df["Similitud Numérica"].str.rstrip('%').astype(float)
+        df["Similitud Numérica"] = df["Similitud Numérica"].apply(lambda x: f"{x:.2f}%")
+
+        for i, row in df.iterrows():
+            html = html.replace(
+                f'<td class="fixed-width" style="border:1px solid black; padding:10px; text-align:left; vertical-align:top;">{row["Similitud Numérica"]}%</td>',
+                f'<td class="fixed-width" style="border:1px solid black; padding:10px; text-align:left; vertical-align:top;">{row["Similitud Numérica"]}</td>'
+            )
+
+        return html
+
     table_html = generate_html_table(comparison_df)
     st.markdown("### Comparación de Documentos")
     st.markdown(table_html, unsafe_allow_html=True)
@@ -285,3 +223,53 @@ if archivo_subido_1 and archivo_subido_2:
                 file_name="comparison.txt",
                 mime="text/plain"
             )
+
+    # Filtrar códigos presentes en ambos documentos
+    common_codes = list(set(text_by_code_1.keys()).intersection(set(text_by_code_2.keys())))
+
+    # Permitir al usuario seleccionar un código
+    selected_code = st.selectbox("Filtrar códigos presentes en ambos documentos:", common_codes)
+
+    if selected_code:
+        texto_modelo = text_by_code_1.get(selected_code, "Ausente")
+        texto_verificacion = text_by_code_2.get(selected_code, "Ausente")
+
+        # Crear el prompt base con los textos correspondientes
+        prompt_base = (
+            f"Documento Modelo:\n{texto_modelo}\n\n"
+            f"Documento Verificación:\n{texto_verificacion}\n\n"
+            "Responde a las preguntas del usuario sobre este análisis de documentos."
+        )
+
+        # Resetear el historial de chat si se selecciona un nuevo código
+        if st.session_state.get("last_selected_code") != selected_code:
+            st.session_state.chat_history = [{"role": "system", "content": prompt_base}]
+            st.session_state.last_selected_code = selected_code
+
+        # Mostrar interacción de chat
+        st.markdown("### InteresseAssist Bot")
+
+        # Mostrar historial de chat
+        for message in st.session_state.chat_history:
+            st.write(f"{message['role']}: {message['content']}")
+
+        # Obtener la pregunta del usuario
+        if prompt := st.text_input("Haz tu pregunta:"):
+            # Añadir la pregunta al historial de chat
+            st.session_state.chat_history.append({"role": "user", "content": prompt})
+
+            # Llamar al modelo GPT-3.5-turbo con el historial de chat actualizado
+            response = client.chat_completions.create(
+                model="gpt-3.5-turbo",
+                messages=st.session_state.chat_history,
+                max_tokens=1000,
+                temperature=0.7,
+            )
+
+            # Añadir la respuesta al historial de chat
+            st.session_state.chat_history.append(
+                {"role": "assistant", "content": response.choices[0].message['content']}
+            )
+
+            # Mostrar la respuesta en la ventana de chat
+            st.write(f"assistant: {response.choices[0].message['content']}")
