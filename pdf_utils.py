@@ -1,5 +1,5 @@
 from pdfminer.high_level import extract_text
-from .patterns import patterns_to_remove
+from endosarioia.pdf_utils.patterns import patterns_to_remove # Ruta absoluta
 
 def extract_pdf_text(pdf_path):
     """Extrae el texto de un archivo PDF."""
