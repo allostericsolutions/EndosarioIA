@@ -169,6 +169,15 @@ def extract_and_clean_text(pdf_path):
 def clean_text(text):
     return ''.join(filter(lambda x: x in set(chr(i) for i in range(32, 127)), text))
 
+# Función para agregar asteriscos según el porcentaje
+def get_asterisks(similarity_percentage):
+    if similarity_percentage > 95:
+        return ""  # Sin asterisco para > 95%
+    elif 90 <= similarity_percentage <= 94:
+        return "*"  # Un asterisco para 90-94%
+    else:
+        return "**"  # Dos asteriscos para <= 89%
+
 # Función para extraer y alinear los números y su contexto
 def extract_and_align_numbers_with_context(text1, text2, context_size=30):
     def extract_numbers_with_context(text):
