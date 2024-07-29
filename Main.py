@@ -453,7 +453,7 @@ if archivo_subido_1 and archivo_subido_2:
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=st.session_state.chat_history,
-            max_tokens=100,
+            max_tokens=1000,
             temperature=0.7,
         )
 
