@@ -9,10 +9,11 @@ from PIL import Image
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from openpyxl.utils.exceptions import IllegalCharacterError
-from text_processing import extract_and_clean_text 
+from text_processing import extract_and_clean_text
+from file_utils.file_creators import create_excel, create_csv, create_txt
 
 from gpt_config.openai_setup import initialize_openai
-client = initialize_openai() 
+client = initialize_openai()
 
 # Función para preprocesar y normalizar el texto
 def preprocess_text(text):
@@ -31,10 +32,6 @@ def calculate_semantic_similarity(text1, text2):
 
     cosine_sim = cosine_similarity(vectors)
     return cosine_sim[0, 1] * 100
-
-# Función para limpiar caracteres ilegales
-def clean_text(text):
-    return ''.join(filter(lambda x: x in set(chr(i) for i in range(32, 127)), text))
 
 # Función para extraer y alinear números con contexto
 def extract_and_align_numbers_with_context(text1, text2, context_size=30):
@@ -68,35 +65,6 @@ def calculate_numbers_similarity(nums1, nums2):
         if n1 == n2:
             matches += 1
     return (matches / len(nums1_list)) * 100 if nums1_list else 0
-
-# Función para crear archivo Excel
-def create_excel(data):
-    buffer = io.BytesIO()
-    df = pd.DataFrame(data)
-    for column in df.columns:
-        df[column] = df[column].apply(clean_text)
-    df.to_excel(buffer, index=False, engine='openpyxl')
-    buffer.seek(0)
-    return buffer
-
-# Función para crear archivo CSV
-def create_csv(data):
-    buffer = io.BytesIO()
-    df = pd.DataFrame(data)
-    df.to_csv(buffer, index=False)
-    buffer.seek(0)
-    return buffer
-
-# Función para crear archivo TXT
-def create_txt(data, code_counts_1, unique_code_count_2):
-    buffer = io.BytesIO()
-    buffer.write("## Comparación de Documentos\n\n".encode('utf-8'))
-    buffer.write(data.to_string(index=False, header=True).encode('utf-8'))
-    buffer.write("\n\n## Conteo de Códigos\n\n".encode('utf-8'))
-    buffer.write(f"**Documento Modelo:** {code_counts_1} (Faltan: {', '.join(list(all_codes - set(codes_model)))})\n".encode('utf-8'))
-    buffer.write(f"**Documento Verificación:** {unique_code_count_2} (Faltan: {', '.join(list(all_codes - set(text_by_code_2.keys())))})\n".encode('utf-8'))
-    buffer.seek(0)
-    return buffer
 
 # Interfaz de usuario de Streamlit
 st.title("Endosario Móvil")
@@ -146,6 +114,7 @@ if archivo_subido_1 and archivo_subido_2:
         doc2_text = text_by_code_2.get(code, "Ausente")
         doc2_text_display = handle_long_text(doc2_text)
 
+        # Si un texto no está presente, el porcentaje de similitud textual es 0
         if doc1_text == "Ausente" or doc2_text == "Ausente":
             sim_percentage = 0
             similarity_str = "0.00%"
@@ -153,14 +122,17 @@ if archivo_subido_1 and archivo_subido_2:
             sim_percentage = calculate_semantic_similarity(doc1_text, doc2_text)
             similarity_str = f'{sim_percentage:.2f}%'
 
+        # Si un número no está presente, el porcentaje de similitud numérica es 0
         if doc1_text == "Ausente" or doc2_text == "Ausente":
             num_similarity_percentage = 0
             doc1_num_display = "Ausente"
             doc2_num_display = "Ausente"
         else:
-            doc1_num, doc1_context, doc2_num, doc2_context = extract_and_align_numbers_with_context(doc1_text, doc2_text)
+            doc1_num, doc1_context, doc2_num, doc2_context = extract_and_align_numbers_with_context(
+                doc1_text, doc2_text)
             doc1_num_display = f'<details><summary>{doc1_num}</summary><p>{doc1_context}</p></details>'
             doc2_num_display = f'<details><summary>{doc2_num}</summary><p>{doc2_context}</p></details>'
+
             num_similarity_percentage = calculate_numbers_similarity(doc1_num, doc2_num)
 
         row = {
@@ -170,7 +142,7 @@ if archivo_subido_1 and archivo_subido_2:
             "Documento Verificación": doc2_text_display if doc2_text != "Ausente" else f'<b style="color:red;">Ausente</b>',
             "Valores numéricos Verificación": f'<details><summary>Contexto</summary>{doc2_num_display}</details>',
             "Similitud Texto": similarity_str,
-            "Similitud Numérica": f'{num_similarity_percentage:.2f}%'  # Formato de porcentaje
+            "Similitud Numérica": f'{num_similarity_percentage:.2f}%'
         }
         comparison_data.append(row)
 
@@ -204,7 +176,7 @@ if archivo_subido_1 and archivo_subido_2:
             '<th style="font-size: 20px; font-weight: bold;">Documento Verificación</th>'
         )
 
-        # Formatear la columna "Similitud Numérica" a porcentaje con dos decimales
+        # Agrega estilos CSS para las celdas de similitud numérica
         df["Similitud Numérica"] = df["Similitud Numérica"].str.rstrip('%').astype(float)
         df["Similitud Numérica"] = df["Similitud Numérica"].apply(lambda x: f"{x:.2f}%")
 
@@ -216,15 +188,19 @@ if archivo_subido_1 and archivo_subido_2:
 
         return html
 
+    # Convertir DataFrame a HTML con estilización CSS y HTML modificado
     table_html = generate_html_table(comparison_df)
     st.markdown("### Comparación de Documentos")
     st.markdown(table_html, unsafe_allow_html=True)
 
+    # Mostrar el conteo de códigos
     st.markdown("### Conteo de Códigos")
     st.write(f"**Documento Modelo:** {unique_code_count_1} (Faltan: {', '.join(list(all_codes - set(codes_model)))})")
-    st.write(f"**Documento Verificación:** {unique_code_count_2} (Faltan: {', '.join(list(all_codes - set(text_by_code_2.keys())))})")
+    st.write(
+        f"**Documento Verificación:** {unique_code_count_2} (Faltan: {', '.join(list(all_codes - set(text_by_code_2.keys())))})")
 
-    col1, col2, col3 = st.columns(3) 
+    # Botones para descargar los archivos
+    col1, col2, col3 = st.columns(3)
     with col1:
         download_excel = st.button("Download Comparison Excel")
         if download_excel:
@@ -248,7 +224,7 @@ if archivo_subido_1 and archivo_subido_2:
     with col3:
         download_txt = st.button("Download Comparison TXT")
         if download_txt:
-            txt_buffer = create_txt(comparison_df, unique_code_count_1, unique_code_count_2) 
+            txt_buffer = create_txt(comparison_df, unique_code_count_1, unique_code_count_2)
             st.download_button(
                 label="Descarga TXT",
                 data=txt_buffer,
@@ -259,53 +235,80 @@ if archivo_subido_1 and archivo_subido_2:
     # --- Sección para la IA ---
     st.markdown("### InteresseAssist Bot")
 
+    # Inicializar el historial de chat en session_state
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = []
 
+    # Cargar el prompt desde el archivo
     with open("gpt_config/prompt.txt", "r") as f:
         prompt_base = f.read()
 
+    # Obtener códigos comunes a ambos documentos
     filtered_codes = list(set(text_by_code_1.keys()) & set(text_by_code_2.keys()))
-    selected_code = st.selectbox("Selecciona un código:", filtered_codes) 
 
+    # Filtro de códigos
+    selected_code = st.selectbox("Selecciona un código:", filtered_codes)
+
+    # Mostrar tabla filtrada
     if selected_code:
+        # Filtrar la tabla comparativa
         comparison_data = [
-            row for row in comparison_data if row["Código"] == f'<b><span style="color:red;">{selected_code}</span></b>'
+            row for row in comparison_data if
+            row["Código"] == f'<b><span style="color:red;">{selected_code}</span></b>'
         ]
+
         comparison_df = pd.DataFrame(comparison_data)
         table_html = generate_html_table(comparison_df)
         st.markdown("### Comparación de Documentos (Filtrado)")
         st.markdown(table_html, unsafe_allow_html=True)
 
+        # Sección para el chat con GPT
         st.markdown("### InteresseAssist Bot")
+
+        # Mostrar los textos filtrados de forma oculta
         texto_modelo = text_by_code_1.get(selected_code, "Ausente")
         texto_verificacion = text_by_code_2.get(selected_code, "Ausente")
         with st.expander("Mostrar Textos Filtrados"):
             st.markdown(f"**Documento Modelo:** {texto_modelo}")
             st.markdown(f"**Documento Verificación:** {texto_verificacion}")
 
-        fila_comparacion = comparison_df.loc[comparison_df["Código"] == f'<b><span style="color:red;">{selected_code}</span></b>']
+        # Obtener la fila de la tabla de comparación
+        fila_comparacion = comparison_df.loc[
+            comparison_df["Código"] == f'<b><span style="color:red;">{selected_code}</span></b>']
+
+        # Convertir la fila a un string
         fila_comparacion_str = fila_comparacion.to_string(index=False, header=False)
 
+        # Crear el prompt inicial con el texto de los documentos
         info_analisis = {
             "texto_modelo": texto_modelo,
             "texto_verificacion": texto_verificacion,
-            "fila_comparacion": fila_comparacion_str, 
+            "fila_comparacion": fila_comparacion_str,
         }
         prompt_final = prompt_base.format(**info_analisis)
 
+        # Mostrar la ventana de chat
         for message in st.session_state.chat_history:
             with st.chat_message(message["role"]):
                 st.write(message["content"])
 
+        # Obtener la pregunta del usuario
         if prompt := st.chat_input("Escribe tu pregunta:"):
+            # Agregar la pregunta al historial de chat
             st.session_state.chat_history.append({"role": "user", "content": prompt})
+
+            # Llamar a GPT-3 con el prompt final
             response = client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=st.session_state.chat_history,
                 max_tokens=1000,
                 temperature=0.7,
             )
-            st.session_state.chat_history.append({"role": "assistant", "content": response.choices[0].message.content})
+
+            # Agregar la respuesta al historial de chat
+            st.session_state.chat_history.append(
+                {"role": "assistant", "content": response.choices[0].message.content})
+
+            # Mostrar la respuesta en la ventana de chat
             with st.chat_message("assistant"):
-                st.write(response.choices[0].message.content) 
+                st.write(response.choices[0].message.content)
