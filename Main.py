@@ -1,4 +1,4 @@
-mport streamlit as st from pdfminer.high_level import extract_text from fpdf import FPDF import pandas as pd import io import re import difflib from PIL import Image # Para trabajar con imágenes from sklearn.feature_extraction.text import TfidfVectorizer from sklearn.metrics.pairwise import cosine_similarity from openpyxl.utils.exceptions import IllegalCharacterError
+import streamlit as st from pdfminer.high_level import extract_text from fpdf import FPDF import pandas as pd import io import re import difflib from PIL import Image # Para trabajar con imágenes from sklearn.feature_extraction.text import TfidfVectorizer from sklearn.metrics.pairwise import cosine_similarity from openpyxl.utils.exceptions import IllegalCharacterError
 
 from gpt_config.openai_setup import initialize_openai client = initialize_openai() # Inicializa OpenAI al principio de la aplicación
 
