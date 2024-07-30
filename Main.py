@@ -11,7 +11,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from openpyxl.utils.exceptions import IllegalCharacterError
 from text_processing import extract_and_clean_text
 from file_utils.file_creators import create_excel, create_csv, create_txt
-from file_utils.image_utils import mostrar_imagen  # Importar tu función desde image_utils.py, asegúrate de que la ruta es correcta
+from file_utils.image_utils import mostrar_imagen
 from gpt_config.openai_setup import initialize_openai
 
 # Importar funciones del módulo file_utils.text_processing.text_processing
@@ -19,15 +19,16 @@ from file_utils.text_processing.text_processing import preprocess_text, calculat
 
 client = initialize_openai()
 
-# Interfaz de usuario de Streamlit
+# Título de la aplicación en la página principal
 st.title("Endosario Móvil")
 
-# Mostrar la imagen al inicio de la aplicación
-image_path = 'Allosteric_Solutions.png'
-caption = 'Interesse'
-width = 300
-
-mostrar_imagen(image_path, caption, width)
+# Mostrar la imagen y el título en la barra lateral
+with st.sidebar.expander("Información", expanded=True):
+    st.markdown("### Endosario Móvil")
+    image_path = 'Allosteric_Solutions.png'
+    caption = 'Interesse'
+    width = 300
+    mostrar_imagen(image_path, caption, width)
 
 # Subir los dos archivos PDF
 uploaded_file_1 = st.file_uploader("Modelo", type=["pdf"], key="uploader1")
