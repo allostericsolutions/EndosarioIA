@@ -316,12 +316,3 @@ if archivo_subido_1 and archivo_subido_2:
             # Mostrar la respuesta en la ventana de chat
             with st.chat_message("assistant"):
                 st.write(response.choices[0].message.content)
-
-
-El bloque de código que se encarga de limpiar la conversación del chat cuando se selecciona un nuevo código se ha añadido justo después de la selección del código:
-
-
-# Limpiar conversación del chat al seleccionar un nuevo código
-if selected_code and st.session_state.get("last_selected_code") != selected_code:
-    st.session_state.chat_history = []
-    st.session_state.last_selected_code = selected_code
