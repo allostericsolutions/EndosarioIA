@@ -11,7 +11,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from openpyxl.utils.exceptions import IllegalCharacterError
 from text_processing import extract_and_clean_text
 from file_utils.file_creators import create_excel, create_csv, create_txt
-from file_utils.image_utils import mostrar_imagen  # Importar tu función desde image_utils.py
+from file_utils.image_utils import mostrar_imagen  # Importar tu función desde image_utils.py, asegúrate de que la ruta es correcta
 from gpt_config.openai_setup import initialize_openai
 
 # Importar funciones del módulo file_utils.text_processing.text_processing
@@ -85,7 +85,7 @@ if archivo_subido_1 and archivo_subido_2:
             doc1_num_display = "Ausente"
             doc2_num_display = "Ausente"
         else:
-            doc1_num, doc1_context, doc2_num, doc2_context = extract_and_align_numbers_with_context(doc1_text, doc2_text)
+            dir(doc1_num, doc1_context, doc2_num, doc2_context) = extract_and_align_numbers_with_context(doc1_text, doc2_text)
             doc1_num_display = f'<details><summary>{doc1_num}</summary><p>{doc1_context}</p></details>'
             doc2_num_display = f'<details><summary>{doc2_num}</summary><p>{doc2_context}</p></details>'
 
