@@ -318,8 +318,6 @@ if archivo_subido_1 and archivo_subido_2:
                 st.write(response.choices[0].message.content)
 ```
 
-### Dónde Colocarlo
-
 El bloque de código que se encarga de limpiar la conversación del chat cuando se selecciona un nuevo código se ha añadido justo después de la selección del código:
 
 ```python
