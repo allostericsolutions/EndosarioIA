@@ -27,11 +27,6 @@ image_path = 'Allosteric_Solutions.png'
 caption = 'Interesse'
 width = 300
 
-# Verificar y mostrar los valores
-st.write(f"Ruta de la imagen: {image_path}")
-st.write(f"Título: {caption}")
-st.write(f"Ancho: {width}")
-
 mostrar_imagen(image_path, caption, width)
 
 # Subir los dos archivos PDF
