@@ -11,72 +11,22 @@ from sklearn.metrics.pairwise import cosine_similarity
 from openpyxl.utils.exceptions import IllegalCharacterError
 from text_processing import extract_and_clean_text
 from file_utils.file_creators import create_excel, create_csv, create_txt
-from file_utils.image_utils import mostrar_imagen  # Importación de la nueva función
-
+from file_utils.image_utils import mostrar_imagen  # Importar tu función desde image_utils.py
 from gpt_config.openai_setup import initialize_openai
+
+# Importar funciones del módulo file_utils.text_processing.text_processing
+from file_utils.text_processing.text_processing import preprocess_text, calculate_semantic_similarity, extract_and_align_numbers_with_context, calculate_numbers_similarity
+
 client = initialize_openai()
-
-# Función para preprocesar y normalizar el texto
-def preprocess_text(text):
-    text = text.lower()
-    text = re.sub(r'[^\w\s.]', '', text)
-    text = re.sub(r'\s+', ' ', text).strip()
-    return text
-
-# Función para calcular la similitud semántica
-def calculate_semantic_similarity(text1, text2):
-    text1 = preprocess_text(text1)
-    text2 = preprocess_text(text2)
-
-    vectorizer = TfidfVectorizer().fit_transform([text1, text2])
-    vectors = vectorizer.toarray()
-
-    cosine_sim = cosine_similarity(vectors)
-    return cosine_sim[0, 1] * 100
-
-# Función para extraer y alinear números con contexto
-def extract_and_align_numbers_with_context(text1, text2, context_size=30):
-    def extract_numbers_with_context(text):
-        matches = re.finditer(r'\b\d+\b', text)
-        numbers_with_context = []
-        for match in matches:
-            start = max(0, match.start() - context_size)
-            end = min(len(text), match.end() + context_size)
-            context = text[start:end].strip()
-            numbers_with_context.append((match.group(), context))
-        return numbers_with_context
-
-    nums1_with_context = extract_numbers_with_context(text1)
-    nums2_with_context = extract_numbers_with_context(text2)
-
-    nums1 = [num for num, context in nums1_with_context] + [''] * max(0, len(nums2_with_context) - len(nums1_with_context))
-    nums2 = [num for num, context in nums2_with_context] + [''] * max(0, len(nums1_with_context) - len(nums2_with_context))
-
-    context1 = [context for num, context in nums1_with_context] + [''] * max(0, len(nums2_with_context) - len(nums1_with_context))
-    context2 = [context for num, context in nums2_with_context] + [''] * max(0, len(nums1_with_context) - len(nums2_with_context))
-
-    return ' '.join(nums1) if nums1 else 'N/A', ' '.join(context1) if context1 else 'N/A', ' '.join(nums2) if nums2 else 'N/A', ' '.join(context2) if context2 else 'N/A'
-
-# Función para calcular la similitud de números
-def calculate_numbers_similarity(nums1, nums2):
-    nums1_list = nums1.split()
-    nums2_list = nums2.split()
-    matches = 0
-    for n1, n2 in zip(nums1_list, nums2_list):
-        if n1 == n2:
-            matches += 1
-    return (matches / len(nums1_list)) * 100 if nums1_list else 0
 
 # Interfaz de usuario de Streamlit
 st.title("Endosario Móvil")
 
-# Llama a la función para mostrar la imagen con el tamaño deseado
+# Mostrar la imagen al inicio de la aplicación
 image_path = 'Allosteric_Solutions.png'
 caption = 'Interesse'
-width = 300  # Ajusta el tamaño según sea necesario
-height = None  # Puedes ajustar la altura también si lo deseas
-
-# Usar la función importada para mostrar la imagen
+width = 300
+height = None
 mostrar_imagen(image_path, caption, width, height)
 
 # Subir los dos archivos PDF
@@ -135,8 +85,7 @@ if archivo_subido_1 and archivo_subido_2:
             doc1_num_display = "Ausente"
             doc2_num_display = "Ausente"
         else:
-            doc1_num, doc1_context, doc2_num, doc2_context = extract_and_align_numbers_with_context(
-                doc1_text, doc2_text)
+            doc1_num, doc1_context, doc2_num, doc2_context = extract_and_align_numbers_with_context(doc1_text, doc2_text)
             doc1_num_display = f'<details><summary>{doc1_num}</summary><p>{doc1_context}</p></details>'
             doc2_num_display = f'<details><summary>{doc2_num}</summary><p>{doc2_context}</p></details>'
 
@@ -203,8 +152,7 @@ if archivo_subido_1 and archivo_subido_2:
     # Mostrar el conteo de códigos
     st.markdown("### Conteo de Códigos")
     st.write(f"**Documento Modelo:** {unique_code_count_1} (Faltan: {', '.join(list(all_codes - set(codes_model)))})")
-    st.write(
-        f"**Documento Verificación:** {unique_code_count_2} (Faltan: {', '.join(list(all_codes - set(text_by_code_2.keys())))})")
+    st.write(f"**Documento Verificación:** {unique_code_count_2} (Faltan: {', '.join(list(all_codes - set(text_by_code_2.keys())))})")
 
     # Botones para descargar los archivos
     col1, col2, col3 = st.columns(3)
