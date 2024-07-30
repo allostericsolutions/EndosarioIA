@@ -11,6 +11,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from openpyxl.utils.exceptions import IllegalCharacterError
 from text_processing import extract_and_clean_text
 from file_utils.file_creators import create_excel, create_csv, create_txt
+from file_utils.image_utils import mostrar_imagen  # Importación de la nueva función
 
 from gpt_config.openai_setup import initialize_openai
 client = initialize_openai()
@@ -69,10 +70,14 @@ def calculate_numbers_similarity(nums1, nums2):
 # Interfaz de usuario de Streamlit
 st.title("Endosario Móvil")
 
-# Mostrar la imagen al inicio de la aplicación
+# Llama a la función para mostrar la imagen con el tamaño deseado
 image_path = 'Allosteric_Solutions.png'
-image = Image.open(image_path)
-st.image(image, caption='Interesse', use_column_width=True)
+caption = 'Interesse'
+width = 300  # Ajusta el tamaño según sea necesario
+height = None  # Puedes ajustar la altura también si lo deseas
+
+# Usar la función importada para mostrar la imagen
+mostrar_imagen(image_path, caption, width, height)
 
 # Subir los dos archivos PDF
 uploaded_file_1 = st.file_uploader("Modelo", type=["pdf"], key="uploader1")
