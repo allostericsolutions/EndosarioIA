@@ -12,6 +12,4 @@ def mostrar_imagen(image_path, caption, width=None, height=None):
     - height: Altura deseada de la imagen (en píxeles).
     """
     image = Image.open(image_path)
-    
-    # Mostrar la imagen con el ancho y altura especificados (si se proporcionan)
     st.image(image, caption=caption, use_column_width=False, width=width, height=height)
