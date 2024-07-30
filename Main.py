@@ -85,7 +85,7 @@ if archivo_subido_1 and archivo_subido_2:
             doc1_num_display = "Ausente"
             doc2_num_display = "Ausente"
         else:
-            dir(doc1_num, doc1_context, doc2_num, doc2_context) = extract_and_align_numbers_with_context(doc1_text, doc2_text)
+            dir(doc1_num, doc1_context, doc2_num, doc2_context) == extract_and_align_numbers_with_context(doc1_text, doc2_text)
             doc1_num_display = f'<details><summary>{doc1_num}</summary><p>{doc1_context}</p></details>'
             doc2_num_display = f'<details><summary>{doc2_num}</summary><p>{doc2_context}</p></details>'
 
