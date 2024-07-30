@@ -20,11 +20,11 @@ from file_utils.text_processing.text_processing import preprocess_text, calculat
 client = initialize_openai()
 
 # Título de la aplicación en la página principal
-st.title("Endosario Móvil")
+st.title("Endosario Móvil AI 2.0")
 
 # Mostrar la imagen y el título en la barra lateral
 with st.sidebar.expander("Información", expanded=True):
-    st.markdown("### Endosario Móvil")
+    st.markdown("### Endosario Móvil AI 2.0")
     image_path = 'Allosteric_Solutions.png'
     caption = 'Interesse'
     width = 300
