@@ -276,6 +276,7 @@ if archivo_subido_1 and archivo_subido_2:
         if st.button("Enviar para Análisis"):
             st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
             st.session_state.analysis_loaded = True
+            st.markdown("""<div style="width:100%;height:0;padding-bottom:100%;position:relative;"><iframe src="https://giphy.com/embed/gYWeVOiMmbg3kzCTq5" width="100%" height="100%" style="position:absolute" frameBorder="0" class="giphy-embed" allowFullScreen></iframe></div><p><a href="https://giphy.com/gifs/gYWeVOiMmbg3kzCTq5">via GIPHY</a></p>""", unsafe_allow_html=True)
 
     # Verificar si el análisis ha sido cargado
     if st.session_state.analysis_loaded:
