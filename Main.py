@@ -26,15 +26,13 @@ st.title("Endosario Móvil")
 image_path = 'Allosteric_Solutions.png'
 caption = 'Interesse'
 width = 300
-height = None
 
 # Verificar y mostrar los valores
 st.write(f"Ruta de la imagen: {image_path}")
 st.write(f"Título: {caption}")
 st.write(f"Ancho: {width}")
-st.write(f"Altura: {height}")
 
-mostrar_imagen(image_path, caption, width, height)
+mostrar_imagen(image_path, caption, width)
 
 # Subir los dos archivos PDF
 uploaded_file_1 = st.file_uploader("Modelo", type=["pdf"], key="uploader1")
