@@ -251,7 +251,12 @@ if archivo_subido_1 and archivo_subido_2:
     filtered_codes = list(set(text_by_code_1.keys()) & set(text_by_code_2.keys()))
 
     # Filtro de códigos
-    selected_code = st.selectbox("Selecciona un código:", filtered_codes)
+    selected_code = st.selectbox("Selecciona un código:", filtered_codes, key="selected_code")
+
+    # Limpiar conversación del chat al seleccionar un nuevo código
+    if selected_code and st.session_state.get("last_selected_code") != selected_code:
+        st.session_state.chat_history = []
+        st.session_state.last_selected_code = selected_code
 
     if selected_code:
         # Sección para el chat con GPT para cargar el análisis de documentos
@@ -276,7 +281,6 @@ if archivo_subido_1 and archivo_subido_2:
         if st.button("Enviar para Análisis"):
             st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
             st.session_state.analysis_loaded = True
-            st.markdown("""<div style="width:100%;height:0;padding-bottom:100%;position:relative;"><iframe src="https://giphy.com/embed/gYWeVOiMmbg3kzCTq5" width="100%" height="100%" style="position:absolute" frameBorder="0" class="giphy-embed" allowFullScreen></iframe></div><p><a href="https://giphy.com/gifs/gYWeVOiMmbg3kzCTq5">via GIPHY</a></p>""", unsafe_allow_html=True)
 
     # Verificar si el análisis ha sido cargado
     if st.session_state.analysis_loaded:
@@ -312,3 +316,14 @@ if archivo_subido_1 and archivo_subido_2:
             # Mostrar la respuesta en la ventana de chat
             with st.chat_message("assistant"):
                 st.write(response.choices[0].message.content)
+```
+
+### Dónde Colocarlo
+
+El bloque de código que se encarga de limpiar la conversación del chat cuando se selecciona un nuevo código se ha añadido justo después de la selección del código:
+
+```python
+# Limpiar conversación del chat al seleccionar un nuevo código
+if selected_code and st.session_state.get("last_selected_code") != selected_code:
+    st.session_state.chat_history = []
+    st.session_state.last_selected_code = selected_code
