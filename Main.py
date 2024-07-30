@@ -13,38 +13,38 @@ from text_processing import extract_and_clean_text
 from file_utils.file_creators import create_excel, create_csv, create_txt
 from file_utils.image_utils import mostrar_imagen
 from gpt_config.openai_setup import initialize_openai
+from file_utils.text_processing.file_handlers.upload_and_process import upload_and_process_files
 
 # Importar funciones del módulo file_utils.text_processing.text_processing
 from file_utils.text_processing.text_processing import preprocess_text, calculate_semantic_similarity, extract_and_align_numbers_with_context, calculate_numbers_similarity
 
 client = initialize_openai()
 
-# Título de la aplicación en la página principal
-st.title("Endosario Móvil AI 2.0")
+# Título de la aplicación en la página principal (Usando Markdown para evitar el enlace)
+st.markdown("<h1 style='text-align: center;'>Endosario Móvil 2.0 AI Edition</h1>", unsafe_allow_html=True)
+
+# Descripción breve
+st.markdown("<p style='text-align: center;'>La nueva generación de Endosario Móvil, ahora más inteligente con integración de IA para transformar la gestión móvil.</p>", unsafe_allow_html=True)
 
 # Mostrar la imagen y el título en la barra lateral
 with st.sidebar.expander("Información", expanded=True):
-    st.markdown("### Endosario Móvil AI 2.0")
+    st.markdown("### Endosario Móvil 2.0 AI Edition")
     image_path = 'Allosteric_Solutions.png'
     caption = 'Interesse'
     width = 300
     mostrar_imagen(image_path, caption, width)
 
-# Subir los dos archivos PDF
-uploaded_file_1 = st.file_uploader("Modelo", type=["pdf"], key="uploader1")
-uploaded_file_2 = st.file_uploader("Verificación", type=["pdf"], key="uploader2")
+# Llamar a la función para manejar la subida y procesamiento de archivos
+uploaded_data = upload_and_process_files()
 
-# Variables para manejar el estado de los archivos subidos
-archivo_subido_1 = False
-archivo_subido_2 = False
-
-if uploaded_file_1:
-    archivo_subido_1 = True
-    text_by_code_1, unique_code_count_1, codes_model = extract_and_clean_text(uploaded_file_1)
-
-if uploaded_file_2:
-    archivo_subido_2 = True
-    text_by_code_2, unique_code_count_2, _ = extract_and_clean_text(uploaded_file_2)
+# Utilizar los datos subidos y procesados según sea necesario
+archivo_subido_1 = uploaded_data['archivo_subido_1']
+archivo_subido_2 = uploaded_data['archivo_subido_2']
+text_by_code_1 = uploaded_data['text_by_code_1']
+unique_code_count_1 = uploaded_data['unique_code_count_1']
+codes_model = uploaded_data['codes_model']
+text_by_code_2 = uploaded_data['text_by_code_2']
+unique_code_count_2 = uploaded_data['unique_code_count_2']
 
 # Botón para reiniciar la aplicación
 if st.button("Reiniciar"):
