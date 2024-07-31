@@ -1,11 +1,10 @@
 import streamlit as st
 from openai import ChatCompletion
 
-client = initialize_openai()
-
 # Configurar los parámetros de la página, incluyendo el nuevo icono
 st.set_page_config(page_title="Endosario Móvil AI 2.0", page_icon="ícono robot.png")
 
+# Importar bibliotecas
 from pdfminer.high_level import extract_text
 from fpdf import FPDF
 import pandas as pd
@@ -24,6 +23,7 @@ from gpt_config.openai_setup import initialize_openai
 # Importar funciones del módulo file_utils.text_processing.text_processing
 from file_utils.text_processing.text_processing import preprocess_text, calculate_semantic_similarity, extract_and_align_numbers_with_context, calculate_numbers_similarity
 
+# Inicializar el cliente de OpenAI
 client = initialize_openai()
 
 # Título de la aplicación en la página principal
