@@ -1,10 +1,8 @@
 import streamlit as st
-from openai import ChatCompletion
 
 # Configurar los parámetros de la página, incluyendo el nuevo icono
 st.set_page_config(page_title="Endosario Móvil AI 2.0", page_icon="ícono robot.png")
 
-# Importar bibliotecas
 from pdfminer.high_level import extract_text
 from fpdf import FPDF
 import pandas as pd
@@ -23,7 +21,6 @@ from gpt_config.openai_setup import initialize_openai
 # Importar funciones del módulo file_utils.text_processing.text_processing
 from file_utils.text_processing.text_processing import preprocess_text, calculate_semantic_similarity, extract_and_align_numbers_with_context, calculate_numbers_similarity
 
-# Inicializar el cliente de OpenAI
 client = initialize_openai()
 
 # Título de la aplicación en la página principal
@@ -243,49 +240,37 @@ if archivo_subido_1 and archivo_subido_2:
             st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
             st.session_state.analysis_loaded = True
 
-# Verificar si el análisis ha sido cargado
-if st.session_state.analysis_loaded:
-    st.markdown("### Interactuar con InteresseAssist Bot")
+    # Verificar si el análisis ha sido cargado
+    if st.session_state.analysis_loaded:
+        st.markdown("### Interactuar con InteresseAssist Bot")
 
-    # Botón para limpiar la conversación
-    if st.button("Limpiar Conversación"):
-        st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
+        # Botón para limpiar la conversación
+        if st.button("Limpiar Conversación"):
+            st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
 
-    # Mostrar la ventana de chat excluyendo el prompt del sistema
-    for idx, message in enumerate(st.session_state.chat_history[1:]):
-        role = message["role"]
-        content = message["content"]
+        # Mostrar la ventana de chat excluyendo el prompt del sistema
+        for idx, message in enumerate(st.session_state.chat_history[1:]):
+            with st.chat_message(message["role"]):
+                st.write(message["content"])
 
-        if role == "assistant":
-            st.markdown(f"""<div style="display: flex; align-items: center; margin: 10px 0;">
-                            <img src='IAchat.png' width="30" height="30" style="margin-right: 10px;">
-                            <div>{content}</div>
-                            </div>""", unsafe_allow_html=True)
-        else:
-            st.markdown(f"""<div>{content}</div>""")
+        # Obtener la pregunta del usuario
+        if prompt := st.chat_input("Haz tu pregunta:"):
+            # Agregar la pregunta al historial de chat
+            st.session_state.chat_history.append({"role": "user", "content": prompt})
 
-    # Obtener la pregunta del usuario
-    if prompt := st.chat_input("Haz tu pregunta:"):
-        # Agregar la pregunta al historial de chat
-        st.session_state.chat_history.append({"role": "user", "content": prompt})
+            # Llamar a GPT-3 con el historial de chat actualizado
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=st.session_state.chat_history,
+                max_tokens=1000,
+                temperature=0.7,
+            )
 
-        # Llamar a GPT-3 con el historial de chat actualizado
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=st.session_state.chat_history,
-            max_tokens=1000,
-            temperature=0.7,
-        )
+            # Agregar la respuesta al historial de chat
+            st.session_state.chat_history.append(
+                {"role": "assistant", "content": response.choices[0].message.content}
+            )
 
-        # Agregar la respuesta al historial de chat
-        st.session_state.chat_history.append(
-            {"role": "assistant", "content": response.choices[0].message.content}
-        )
-
-        # Mostrar la respuesta en la ventana de chat
-        content = response.choices[0].message.content
-        with st.chat_message("assistant"):
-            st.markdown(f"""<div style="display: flex; align-items: center; margin: 10px 0;">
-                            <img src='IAchat.png' width="30" height="30" style="margin-right: 10px;">
-                            <div>{content}</div>
-                            </div>""", unsafe_allow_html=True)
+            # Mostrar la respuesta en la ventana de chat
+            with st.chat_message("assistant"):
+                st.write(response.choices[0].message.content)
