@@ -1,4 +1,8 @@
 import streamlit as st
+
+# Configurar los parámetros de la página, incluyendo el nuevo icono
+st.set_page_config(page_title="Endosario Móvil AI 2.0", page_icon="ícono robot.png")
+
 from pdfminer.high_level import extract_text
 from fpdf import FPDF
 import pandas as pd
@@ -270,5 +274,3 @@ if archivo_subido_1 and archivo_subido_2:
             # Mostrar la respuesta en la ventana de chat
             with st.chat_message("assistant"):
                 st.write(response.choices[0].message.content)
-
-
