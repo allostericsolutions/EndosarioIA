@@ -1,4 +1,7 @@
 import streamlit as st
+from openai import ChatCompletion
+
+client = initialize_openai()
 
 # Configurar los parámetros de la página, incluyendo el nuevo icono
 st.set_page_config(page_title="Endosario Móvil AI 2.0", page_icon="ícono robot.png")
@@ -240,37 +243,49 @@ if archivo_subido_1 and archivo_subido_2:
             st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
             st.session_state.analysis_loaded = True
 
-    # Verificar si el análisis ha sido cargado
-    if st.session_state.analysis_loaded:
-        st.markdown("### Interactuar con InteresseAssist Bot")
+# Verificar si el análisis ha sido cargado
+if st.session_state.analysis_loaded:
+    st.markdown("### Interactuar con InteresseAssist Bot")
 
-        # Botón para limpiar la conversación
-        if st.button("Limpiar Conversación"):
-            st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
+    # Botón para limpiar la conversación
+    if st.button("Limpiar Conversación"):
+        st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
 
-        # Mostrar la ventana de chat excluyendo el prompt del sistema
-        for idx, message in enumerate(st.session_state.chat_history[1:]):
-            with st.chat_message(message["role"]):
-                st.write(message["content"])
+    # Mostrar la ventana de chat excluyendo el prompt del sistema
+    for idx, message in enumerate(st.session_state.chat_history[1:]):
+        role = message["role"]
+        content = message["content"]
 
-        # Obtener la pregunta del usuario
-        if prompt := st.chat_input("Haz tu pregunta:"):
-            # Agregar la pregunta al historial de chat
-            st.session_state.chat_history.append({"role": "user", "content": prompt})
+        if role == "assistant":
+            st.markdown(f"""<div style="display: flex; align-items: center; margin: 10px 0;">
+                            <img src='IAchat.png' width="30" height="30" style="margin-right: 10px;">
+                            <div>{content}</div>
+                            </div>""", unsafe_allow_html=True)
+        else:
+            st.markdown(f"""<div>{content}</div>""")
 
-            # Llamar a GPT-3 con el historial de chat actualizado
-            response = client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=st.session_state.chat_history,
-                max_tokens=1000,
-                temperature=0.7,
-            )
+    # Obtener la pregunta del usuario
+    if prompt := st.chat_input("Haz tu pregunta:"):
+        # Agregar la pregunta al historial de chat
+        st.session_state.chat_history.append({"role": "user", "content": prompt})
 
-            # Agregar la respuesta al historial de chat
-            st.session_state.chat_history.append(
-                {"role": "assistant", "content": response.choices[0].message.content}
-            )
+        # Llamar a GPT-3 con el historial de chat actualizado
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=st.session_state.chat_history,
+            max_tokens=1000,
+            temperature=0.7,
+        )
 
-            # Mostrar la respuesta en la ventana de chat
-            with st.chat_message("assistant"):
-                st.write(response.choices[0].message.content)
+        # Agregar la respuesta al historial de chat
+        st.session_state.chat_history.append(
+            {"role": "assistant", "content": response.choices[0].message.content}
+        )
+
+        # Mostrar la respuesta en la ventana de chat
+        content = response.choices[0].message.content
+        with st.chat_message("assistant"):
+            st.markdown(f"""<div style="display: flex; align-items: center; margin: 10px 0;">
+                            <img src='IAchat.png' width="30" height="30" style="margin-right: 10px;">
+                            <div>{content}</div>
+                            </div>""", unsafe_allow_html=True)
