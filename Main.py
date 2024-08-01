@@ -97,10 +97,10 @@ if selected_code and st.session_state.get("last_selected_code") != selected_code
     st.session_state.last_selected_code = selected_code
 
 if selected_code:
-    # Mostrar los textos filtrados de forma oculta
+    # Mostrar los textos filtrados de forma oculta (opcional, puedes eliminar esta sección si no quieres mostrar los textos)
     texto_modelo = text_by_code_1.get(selected_code, "Ausente")
     texto_verificacion = text_by_code_2.get(selected_code, "Ausente")
-    with st.expander("Mostrar Textos Filtrados"):
+    with st.expander("Mostrar Textos Filtrados", expanded=False):
         st.markdown(f"**Documento Modelo:** {texto_modelo}")
         st.markdown(f"**Documento Verificación:** {texto_verificacion}")
 
