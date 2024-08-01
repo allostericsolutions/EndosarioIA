@@ -1,4 +1,8 @@
-import streamlit as st
+mport streamlit as st
+
+# Configurar los parámetros de la página, incluyendo el nuevo icono
+st.set_page_config(page_title="Endosario Móvil AI 2.0", page_icon="ícono robot.png")
+
 from pdfminer.high_level import extract_text
 from fpdf import FPDF
 import pandas as pd
@@ -13,13 +17,11 @@ from text_processing import extract_and_clean_text
 from file_utils.file_creators import create_excel, create_csv, create_txt
 from file_utils.image_utils import mostrar_imagen
 from gpt_config.openai_setup import initialize_openai
+
+# Importar funciones del módulo file_utils.text_processing.text_processing
 from file_utils.text_processing.text_processing import preprocess_text, calculate_semantic_similarity, extract_and_align_numbers_with_context, calculate_numbers_similarity
 
-# Inicializar las configuraciones de OpenAI
 client = initialize_openai()
-
-# Configurar los parámetros de la página, incluyendo el nuevo icono
-st.set_page_config(page_title="Endosario Móvil AI 2.0", page_icon="ícono robot.png")
 
 # Título de la aplicación en la página principal
 st.title("Endosario Móvil AI 2.0")
@@ -40,7 +42,6 @@ uploaded_file_2 = st.file_uploader("Verificación", type=["pdf"], key="uploader2
 archivo_subido_1 = False
 archivo_subido_2 = False
 
-# Verificar si los archivos han sido subidos y extraer el texto
 if uploaded_file_1:
     archivo_subido_1 = True
     text_by_code_1, unique_code_count_1, codes_model = extract_and_clean_text(uploaded_file_1)
@@ -58,11 +59,9 @@ if st.button("Reiniciar"):
 
 # Mostrar la sección de comparación de archivos solo si se han subido ambos archivos
 if archivo_subido_1 and archivo_subido_2:
-    
-    # Obtener todos los códigos únicos presentes en ambos documentos
+    # Obtener todos los códigos únicos
     all_codes = set(text_by_code_1.keys()).union(set(text_by_code_2.keys()))
 
-    # Función para manejar texto largo en el campo del endoso
     def handle_long_text(text, length=70):
         if len(text) > length:
             return f'<details><summary>Endoso</summary>{text}</details>'
@@ -94,9 +93,9 @@ if archivo_subido_1 and archivo_subido_2:
             doc1_num, doc1_context, doc2_num, doc2_context = extract_and_align_numbers_with_context(doc1_text, doc2_text)
             doc1_num_display = f'<details><summary>{doc1_num}</summary><p>{doc1_context}</p></details>'
             doc2_num_display = f'<details><summary>{doc2_num}</summary><p>{doc2_context}</p></details>'
+
             num_similarity_percentage = calculate_numbers_similarity(doc1_num, doc2_num)
 
-        # Agregar los datos a la tabla comparativa
         row = {
             "Código": f'<b><span style="color:red;">{code}</span></b>',
             "Documento Modelo": doc1_text_display if doc1_text != "Ausente" else f'<b style="color:red;">Ausente</b>',
@@ -111,7 +110,7 @@ if archivo_subido_1 and archivo_subido_2:
     # Convertir la lista a DataFrame
     comparison_df = pd.DataFrame(comparison_data)
 
-    # Generar HTML para la tabla con estilización CSS
+    # Generar HTML para la tabla
     def generate_html_table(df):
         html = df.to_html(index=False, escape=False, render_links=True)
         html = html.replace(
@@ -155,12 +154,12 @@ if archivo_subido_1 and archivo_subido_2:
     st.markdown("### Comparación de Documentos")
     st.markdown(table_html, unsafe_allow_html=True)
 
-    # Mostrar el conteo de códigos únicos en cada documento
+    # Mostrar el conteo de códigos
     st.markdown("### Conteo de Códigos")
     st.write(f"**Documento Modelo:** {unique_code_count_1} (Faltan: {', '.join(list(all_codes - set(codes_model)))})")
     st.write(f"**Documento Verificación:** {unique_code_count_2} (Faltan: {', '.join(list(all_codes - set(text_by_code_2.keys())))})")
 
-    # Botones para descargar los archivos de comparación en diferentes formatos
+    # Botones para descargar los archivos
     col1, col2, col3 = st.columns(3)
     with col1:
         download_excel = st.button("Download Comparison Excel")
@@ -202,14 +201,14 @@ if archivo_subido_1 and archivo_subido_2:
     if "analysis_loaded" not in st.session_state:
         st.session_state.analysis_loaded = False
 
-    # Cargar el prompt desde el archivo de configuración
+    # Cargar el prompt desde el archivo
     with open("gpt_config/prompt.txt", "r") as f:
         prompt_base = f.read()
 
     # Obtener códigos comunes a ambos documentos
     filtered_codes = list(set(text_by_code_1.keys()) & set(text_by_code_2.keys()))
 
-    # Filtro de códigos para la selección en la interfaz
+    # Filtro de códigos
     selected_code = st.selectbox("Selecciona un código:", filtered_codes, key="selected_code")
 
     # Limpiar conversación del chat al seleccionar un nuevo código
@@ -228,19 +227,15 @@ if archivo_subido_1 and archivo_subido_2:
             st.markdown(f"**Documento Modelo:** {texto_modelo}")
             st.markdown(f"**Documento Verificación:** {texto_verificacion}")
 
-            # Incluir el código en los textos antes de enviarlos para análisis
-            texto_modelo_con_codigo = f"Código: {selected_code}\n\n{texto_modelo}"
-            texto_verificacion_con_codigo = f"Código: {selected_code}\n\n{texto_verificacion}"
-
-        # Crear el prompt inicial con el texto de los documentos y el código
+        # Crear el prompt inicial con el texto de los documentos
         info_analisis = {
-            "texto_modelo": texto_modelo_con_codigo,
-            "texto_verificacion": texto_verificacion_con_codigo,
+            "texto_modelo": texto_modelo,
+            "texto_verificacion": texto_verificacion,
             "fila_comparacion": "",  # No se necesita en este caso
         }
         prompt_final = prompt_base.format(**info_analisis)
 
-        # Iniciar el chat para cargar el análisis
+        # Iniciar chat para cargar
         if st.button("Enviar para Análisis"):
             st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
             st.session_state.analysis_loaded = True
