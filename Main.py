@@ -261,27 +261,35 @@ if archivo_subido_1 and archivo_subido_2:
             with st.chat_message(message["role"]):
                 st.write(message["content"])
 
+        # Limitar el tamaño del historial de chat
+        max_historial = 3000  # Define el tamaño máximo del historial
+        trimmed_history = st.session_state.chat_history[-max_historial:]
+        
         # Obtener la pregunta del usuario
         if prompt := st.chat_input("Haz tu pregunta:"):
             # Agregar la pregunta al historial de chat
-            st.session_state.chat_history.append({"role": "user", "content": prompt})
+            trimmed_history.append({"role": "user", "content": prompt})
 
             # Incluir un mensaje de presentación antes de la respuesta inmediata
-            st.session_state.chat_history.append({"role": "assistant", "content": "Hola, soy tu asistente virtual. ¿En qué puedo ayudarte hoy? Déjame procesar tu pregunta..."})
+            trimmed_history.append({"role": "assistant", "content": "Hola, soy tu asistente virtual. ¿En qué puedo ayudarte hoy? Déjame procesar tu pregunta..."})
 
-            # Llamar a GPT-3 con el historial de chat actualizado
-            response = client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=st.session_state.chat_history,
-                max_tokens=1200,
-                temperature=0.2,
-            )
+            try:
+                # Llamar a GPT-3 con el historial de chat actualizado
+                response = client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=trimmed_history,
+                    max_tokens=1200,
+                    temperature=0.2,
+                )
 
-            # Agregar la respuesta al historial de chat
-            st.session_state.chat_history.append(
-                {"role": "assistant", "content": response.choices[0].message.content}
-            )
+                # Agregar la respuesta al historial de chat
+                st.session_state.chat_history.append(
+                    {"role": "assistant", "content": response.choices[0].message.content}
+                )
 
-            # Mostrar la respuesta en la ventana de chat
-            with st.chat_message("assistant"):
-                st.write(response.choices[0].message.content)
+                # Mostrar la respuesta en la ventana de chat
+                with st.chat_message("assistant"):
+                    st.write(response.choices[0].message.content)
+
+            except openai.error.InvalidRequestError as e:
+                st.error(f"Error: {e}")
