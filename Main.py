@@ -274,7 +274,7 @@ if archivo_subido_1 and archivo_subido_2:
 
             # Llamar a GPT-3 con el historial de chat actualizado
             response = client.chat.completions.create(
-                model="gpt-3.5-turbo",
+                model="gpt-4o-mini",
                 messages=st.session_state.chat_history,
                 max_tokens=1200,
                 temperature=0.2,
