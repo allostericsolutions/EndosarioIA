@@ -41,7 +41,7 @@ archivo_subido_1 = False
 archivo_subido_2 = False
 
 # Función cacheada para extraer y limpiar texto (si el contenido del archivo no cambia con frecuencia)
-@st.cache(allow_output_mutation=True)
+@st.cache_data
 def cache_extract_and_clean_text(uploaded_file):
     return extract_and_clean_text(uploaded_file)
 
@@ -84,69 +84,73 @@ if "chat_history" not in st.session_state:
     st.session_state.chat_history.append({"role": "user", "content": "Hola"})
     st.session_state.analysis_loaded = False
 
-# Obtener códigos comunes a ambos documentos
-filtered_codes = list(set(text_by_code_1.keys()) & set(text_by_code_2.keys()))
+# Verificar si ambos archivos han sido subidos antes de proceder
+if archivo_subido_1 and archivo_subido_2:
+    # Obtener códigos comunes a ambos documentos
+    filtered_codes = list(set(text_by_code_1.keys()) & set(text_by_code_2.keys()))
 
-# Filtro de códigos para la selección en la interfaz
-selected_code = st.selectbox("Selecciona un código:", filtered_codes, key="selected_code")
+    # Filtro de códigos para la selección en la interfaz
+    selected_code = st.selectbox("Selecciona un código:", filtered_codes, key="selected_code")
 
-# Limpiar conversación del chat al seleccionar un nuevo código
-if selected_code and st.session_state.get("last_selected_code") != selected_code:
-    st.session_state.chat_history = []
-    st.session_state.chat_history.append({"role": "user", "content": "Hola"})  # Simular un "hola" automático del usuario
-    st.session_state.last_selected_code = selected_code
+    # Limpiar conversación del chat al seleccionar un nuevo código
+    if selected_code and st.session_state.get("last_selected_code") != selected_code:
+        st.session_state.chat_history = []
+        st.session_state.chat_history.append({"role": "user", "content": "Hola"})  # Simular un "hola" automático del usuario
+        st.session_state.last_selected_code = selected_code
 
-if selected_code:
-    # Mostrar los textos filtrados de forma oculta (opcional, puedes eliminar esta sección si no quieres mostrar los textos)
-    texto_modelo = text_by_code_1.get(selected_code, "Ausente")
-    texto_verificacion = text_by_code_2.get(selected_code, "Ausente")
-    with st.expander("Mostrar Textos Filtrados", expanded=False):
-        st.markdown(f"**Documento Modelo:** {texto_modelo}")
-        st.markdown(f"**Documento Verificación:** {texto_verificacion}")
+    if selected_code:
+        # Mostrar los textos filtrados de forma oculta (opcional, puedes eliminar esta sección si no quieres mostrar los textos)
+        texto_modelo = text_by_code_1.get(selected_code, "Ausente")
+        texto_verificacion = text_by_code_2.get(selected_code, "Ausente")
+        with st.expander("Mostrar Textos Filtrados", expanded=False):
+            st.markdown(f"**Documento Modelo:** {texto_modelo}")
+            st.markdown(f"**Documento Verificación:** {texto_verificacion}")
 
-    # Incluir el código en los textos antes de enviarlos para análisis
-    texto_modelo_con_codigo = f"Código: {selected_code}\n\n{texto_modelo}"
-    texto_verificacion_con_codigo = f"Código: {selected_code}\n\n{texto_verificacion}"
+        # Incluir el código en los textos antes de enviarlos para análisis
+        texto_modelo_con_codigo = f"Código: {selected_code}\n\n{texto_modelo}"
+        texto_verificacion_con_codigo = f"Código: {selected_code}\n\n{texto_verificacion}"
 
-    # Cargar el prompt desde el archivo
-    prompt_base = load_prompt()
+        # Cargar el prompt desde el archivo
+        prompt_base = load_prompt()
 
-    # Crear el prompt inicial con el texto de los documentos y el código
-    info_analisis = {
-        "texto_modelo": texto_modelo_con_codigo,
-        "texto_verificacion": texto_verificacion_con_codigo,
-        "fila_comparacion": "",  # No se necesita en este caso
-    }
-    prompt_final = prompt_base.format(**info_analisis)
+        # Crear el prompt inicial con el texto de los documentos y el código
+        info_analisis = {
+            "texto_modelo": texto_modelo_con_codigo,
+            "texto_verificacion": texto_verificacion_con_codigo,
+            "fila_comparacion": "",  # No se necesita en este caso
+        }
+        prompt_final = prompt_base.format(**info_analisis)
 
-    # Iniciar el chat para cargar el análisis
-    if st.button("Enviar para Análisis"):
-        response = chat_with_bot(prompt_final)
-        st.session_state.chat_history.append({"role": "assistant", "content": response})
-        st.session_state.analysis_loaded = True
-        st.write(response)
-
-# Verificar si el análisis ha sido cargado y gestionar las interacciones siguientes
-if st.session_state.analysis_loaded:
-    # Botón para limpiar la conversación colocado en la barra lateral
-    if st.sidebar.button("Limpiar Conversación"):
-        st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
-        st.session_state.analysis_loaded = False
-
-    # Mostrar la ventana de chat excluyendo el prompt del sistema
-    for idx, message in enumerate(st.session_state.chat_history[1:]):
-        with st.chat_message(message["role"]):
-            st.write(message["content"])
-
-    # Obtener la pregunta del usuario
-    if prompt := st.chat_input("Haz tu pregunta:"):
-        # Agregar la pregunta al historial de chat
-        st.session_state.chat_history.append({"role": "user", "content": prompt})
-
-        # Llamar a GPT-3 con el historial de chat actualizado
-        response = chat_with_bot(prompt)
-        st.session_state.chat_history.append({"role": "assistant", "content": response})
-
-        # Mostrar la respuesta en la ventana de chat
-        with st.chat_message("assistant"):
+        # Iniciar el chat para cargar el análisis
+        if st.button("Enviar para Análisis"):
+            response = chat_with_bot(prompt_final)
+            st.session_state.chat_history.append({"role": "assistant", "content": response})
+            st.session_state.analysis_loaded = True
             st.write(response)
+
+    # Verificar si el análisis ha sido cargado y gestionar las interacciones siguientes
+    if st.session_state.analysis_loaded:
+        # Botón para limpiar la conversación colocado en la barra lateral
+        if st.sidebar.button("Limpiar Conversación"):
+            st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
+            st.session_state.analysis_loaded = False
+
+        # Mostrar la ventana de chat excluyendo el prompt del sistema
+        for idx, message in enumerate(st.session_state.chat_history[1:]):
+            with st.chat_message(message["role"]):
+                st.write(message["content"])
+
+        # Obtener la pregunta del usuario
+        if prompt := st.chat_input("Haz tu pregunta:"):
+            # Agregar la pregunta al historial de chat
+            st.session_state.chat_history.append({"role": "user", "content": prompt})
+
+            # Llamar a GPT-3 con el historial de chat actualizado
+            response = chat_with_bot(prompt)
+            st.session_state.chat_history.append({"role": "assistant", "content": response})
+
+            # Mostrar la respuesta en la ventana de chat
+            with st.chat_message("assistant"):
+                st.write(response)
+else:
+    st.write("Por favor, sube ambos archivos PDF para proceder con el análisis.")
