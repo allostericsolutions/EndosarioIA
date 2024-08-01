@@ -228,10 +228,14 @@ if archivo_subido_1 and archivo_subido_2:
             st.markdown(f"**Documento Modelo:** {texto_modelo}")
             st.markdown(f"**Documento Verificación:** {texto_verificacion}")
 
-        # Crear el prompt inicial con el texto de los documentos
+            # Incluir el código en los textos antes de enviarlos para análisis
+            texto_modelo_con_codigo = f"Código: {selected_code}\n\n{texto_modelo}"
+            texto_verificacion_con_codigo = f"Código: {selected_code}\n\n{texto_verificacion}"
+
+        # Crear el prompt inicial con el texto de los documentos y el código
         info_analisis = {
-            "texto_modelo": texto_modelo,
-            "texto_verificacion": texto_verificacion,
+            "texto_modelo": texto_modelo_con_codigo,
+            "texto_verificacion": texto_verificacion_con_codigo,
             "fila_comparacion": "",  # No se necesita en este caso
         }
         prompt_final = prompt_base.format(**info_analisis)
