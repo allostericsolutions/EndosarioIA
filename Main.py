@@ -80,7 +80,7 @@ if archivo_subido_1 and archivo_subido_2:
         # Verificar si el código en el documento Modelo tiene el formato específico
         if re.match(r'^[A-Z]{2}\.\d{3}\.XXX$', code):
             # Extraer el prefijo
-            prefix = code[:8]  # Esto toma "AB.123."
+            prefix = code[:7]  # Esto toma "GC.021."
             
             # Buscar un código en el documento Verificación que coincida con el prefijo
             matching_codes = [c for c in text_by_code_2.keys() if c.startswith(prefix) and c != code]
@@ -89,9 +89,9 @@ if archivo_subido_1 and archivo_subido_2:
                 # Tomar el primer código coincidente
                 matched_code = matching_codes[0]
                 # Obtener los últimos tres dígitos del código coincidente
-                last_three_digits = matched_code.split('.')[2]  # Esto toma "456" de "AB.123.456"
+                last_three_digits = matched_code.split('.')[2]  # Esto toma "706" de "GC.021.706"
                 # Sustituir "XXX" en el código del documento Modelo
-                code = f"{prefix}{last_three_digits}"  # Esto forma "AB.123.456"
+                code = f"{prefix}{last_three_digits}"  # Esto forma "GC.021.706"
             else:
                 # Marcar como ausente si no hay coincidencia
                 doc1_text = "Ausente"
