@@ -15,11 +15,21 @@ from file_utils.image_utils import mostrar_imagen
 from gpt_config.openai_setup import initialize_openai
 from file_utils.text_processing.text_processing import preprocess_text, calculate_semantic_similarity, extract_and_align_numbers_with_context, calculate_numbers_similarity
 
-# Inicializar las configuraciones de OpenAI
-client = initialize_openai()
 
-# Configurar los parámetros de la página, incluyendo el nuevo icono
-st.set_page_config(page_title="Endosario Móvil AI 2.0", page_icon="ícono robot.png")
+# Cachear la inicialización de OpenAI
+@st.cache(allow_output_mutation=True)
+def get_openai_client():
+    return initialize_openai()
+
+client = get_openai_client()
+
+# Cachear la carga de imagen
+@st.cache
+def load_image(image_path):
+    return Image.open(image_path)
+
+# Inicializar la configuración de la página con el nuevo ícono
+st.set_page_config(page_title="Endosario Móvil AI 2.0", page_icon="icono robot.png")
 
 # Título de la aplicación en la página principal
 st.title("Endosario Móvil AI 2.0")
@@ -30,7 +40,8 @@ with st.sidebar.expander("Información", expanded=True):
     image_path = 'Allosteric_Solutions.png'
     caption = 'Interesse'
     width = 300
-    mostrar_imagen(image_path, caption, width)
+    image = load_image(image_path)
+    mostrar_imagen(image, caption, width)
 
 # Subir los dos archivos PDF
 uploaded_file_1 = st.file_uploader("Modelo", type=["pdf"], key="uploader1")
@@ -40,14 +51,19 @@ uploaded_file_2 = st.file_uploader("Verificación", type=["pdf"], key="uploader2
 archivo_subido_1 = False
 archivo_subido_2 = False
 
+# Función cacheada para extraer y limpiar texto (si el contenido del archivo no cambia con frecuencia)
+@st.cache(allow_output_mutation=True)
+def cache_extract_and_clean_text(uploaded_file):
+    return extract_and_clean_text(uploaded_file)
+
 # Verificar si los archivos han sido subidos y extraer el texto
 if uploaded_file_1:
     archivo_subido_1 = True
-    text_by_code_1, unique_code_count_1, codes_model = extract_and_clean_text(uploaded_file_1)
+    text_by_code_1, unique_code_count_1, codes_model = cache_extract_and_clean_text(uploaded_file_1)
 
 if uploaded_file_2:
     archivo_subido_2 = True
-    text_by_code_2, unique_code_count_2, _ = extract_and_clean_text(uploaded_file_2)
+    text_by_code_2, unique_code_count_2, _ = cache_extract_and_clean_text(uploaded_file_2)
 
 # Botón para reiniciar la aplicación
 if st.sidebar.button("Reiniciar"):
@@ -58,7 +74,7 @@ if st.sidebar.button("Reiniciar"):
 
 # Mostrar la sección de comparación de archivos solo si se han subido ambos archivos
 if archivo_subido_1 and archivo_subido_2:
-    
+
     # Obtener todos los códigos únicos presentes en ambos documentos
     all_codes = set(text_by_code_1.keys()).union(set(text_by_code_2.keys()))
 
