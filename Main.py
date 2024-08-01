@@ -77,26 +77,6 @@ if archivo_subido_1 and archivo_subido_2:
         doc2_text = text_by_code_2.get(code, "Ausente")
         doc2_text_display = handle_long_text(doc2_text)
 
-        # Verificar si el código en el documento Modelo tiene el nuevo formato específico
-        if re.match(r'^[A-Z]{2}\.\d{3}\.\w{3}$', code):  # Cambiado para buscar "GC.786.XXX"
-            # Extraer el prefijo
-            prefix = code[:7]  # Esto toma "GC.786."
-            
-            # Buscar un código en el documento Verificación que coincida con el prefijo
-            matching_codes = [c for c in text_by_code_2.keys() if c.startswith(prefix) and c != code]
-            
-            if matching_codes:
-                # Tomar el primer código coincidente
-                matched_code = matching_codes[0]
-                # Obtener el número del código coincidente
-                last_three_digits = matched_code.split('.')[2]  # Esto toma el número de "GC.786.789"
-                # Sustituir "XXX" en el código del documento Modelo
-                code = f"{prefix}{last_three_digits}"  # Esto forma "GC.786.789"
-            else:
-                # Marcar como ausente si no hay coincidencia
-                doc1_text = "Ausente"
-                doc2_text = "Ausente"
-
         # Si un texto no está presente, el porcentaje de similitud textual es 0
         if doc1_text == "Ausente" or doc2_text == "Ausente":
             sim_percentage = 0
