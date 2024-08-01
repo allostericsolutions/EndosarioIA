@@ -58,7 +58,7 @@ if st.sidebar.button("Reiniciar"):
 
 # Mostrar la sección de comparación de archivos solo si se han subido ambos archivos
 if archivo_subido_1 and archivo_subido_2:
-    
+
     # Obtener todos los códigos únicos presentes en ambos documentos
     all_codes = set(text_by_code_1.keys()).union(set(text_by_code_2.keys()))
 
@@ -235,10 +235,6 @@ if archivo_subido_1 and archivo_subido_2:
         texto_modelo_con_codigo = f"Código: {selected_code}\n\n{texto_modelo}"
         texto_verificacion_con_codigo = f"Código: {selected_code}\n\n{texto_verificacion}"
 
-        # Verificación mediante impresión
-        print(f"texto_modelo_con_codigo: {texto_modelo_con_codigo}")
-        print(f"texto_verificacion_con_codigo: {texto_verificacion_con_codigo}")
-
         # Crear el prompt inicial con el texto de los documentos y el código
         info_analisis = {
             "texto_modelo": texto_modelo_con_codigo,
@@ -247,10 +243,7 @@ if archivo_subido_1 and archivo_subido_2:
         }
         prompt_final = prompt_base.format(**info_analisis)
 
-        # Verificación mediante impresión
-        print(f"prompt_final: {prompt_final}")
-
-        # Iniciar el chat para cargar el análisis
+        # Iniciar el chat para cargar el análisis y verificar si el análisis ha sido cargado
         if st.button("Enviar para Análisis"):
             st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
             st.session_state.analysis_loaded = True
@@ -272,6 +265,9 @@ if archivo_subido_1 and archivo_subido_2:
         if prompt := st.chat_input("Haz tu pregunta:"):
             # Agregar la pregunta al historial de chat
             st.session_state.chat_history.append({"role": "user", "content": prompt})
+
+            # Incluir un mensaje de presentación antes de la respuesta inmediata
+            st.session_state.chat_history.append({"role": "assistant", "content": "Hola, soy tu asistente virtual. ¿En qué puedo ayudarte hoy? Déjame procesar tu pregunta..."})
 
             # Llamar a GPT-3 con el historial de chat actualizado
             response = client.chat.completions.create(
