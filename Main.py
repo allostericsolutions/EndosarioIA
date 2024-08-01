@@ -1,4 +1,4 @@
-mport streamlit as st
+import streamlit as st
 
 # Configurar los parámetros de la página, incluyendo el nuevo icono
 st.set_page_config(page_title="Endosario Móvil AI 2.0", page_icon="ícono robot.png")
