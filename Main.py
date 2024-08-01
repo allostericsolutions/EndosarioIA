@@ -50,7 +50,7 @@ if uploaded_file_2:
     text_by_code_2, unique_code_count_2, _ = extract_and_clean_text(uploaded_file_2)
 
 # Botón para reiniciar la aplicación
-if st.button("Reiniciar"):
+if st.sidebar.button("Reiniciar"):
     archivo_subido_1 = False
     archivo_subido_2 = False
     st.session_state.chat_history = []
@@ -259,38 +259,33 @@ if archivo_subido_1 and archivo_subido_2:
     if st.session_state.analysis_loaded:
         st.markdown("### Interactuar con InteresseAssist Bot")
 
-        # Crear columnas para colocar el chat y los botones uno al lado del otro
-        chat_col, button_col = st.columns([5, 1])
+        # Botón para limpiar la conversación colocado en la barra lateral
+        if st.sidebar.button("Limpiar Conversación"):
+            st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
 
-        with chat_col:
-            # Mostrar la ventana de chat excluyendo el prompt del sistema
-            for idx, message in enumerate(st.session_state.chat_history[1:]):
-                with st.chat_message(message["role"]):
-                    st.write(message["content"])
+        # Mostrar la ventana de chat excluyendo el prompt del sistema
+        for idx, message in enumerate(st.session_state.chat_history[1:]):
+            with st.chat_message(message["role"]):
+                st.write(message["content"])
 
-            # Obtener la pregunta del usuario
-            if prompt := st.chat_input("Haz tu pregunta:"):
-                # Agregar la pregunta al historial de chat
-                st.session_state.chat_history.append({"role": "user", "content": prompt})
+        # Obtener la pregunta del usuario
+        if prompt := st.chat_input("Haz tu pregunta:"):
+            # Agregar la pregunta al historial de chat
+            st.session_state.chat_history.append({"role": "user", "content": prompt})
 
-                # Llamar a GPT-3 con el historial de chat actualizado
-                response = client.chat.completions.create(
-                    model="gpt-3.5-turbo",
-                    messages=st.session_state.chat_history,
-                    max_tokens=1200,
-                    temperature=0.2,
-                )
+            # Llamar a GPT-3 con el historial de chat actualizado
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=st.session_state.chat_history,
+                max_tokens=1200,
+                temperature=0.2,
+            )
 
-                # Agregar la respuesta al historial de chat
-                st.session_state.chat_history.append(
-                    {"role": "assistant", "content": response.choices[0].message.content}
-                )
+            # Agregar la respuesta al historial de chat
+            st.session_state.chat_history.append(
+                {"role": "assistant", "content": response.choices[0].message.content}
+            )
 
-                # Mostrar la respuesta en la ventana de chat
-                with st.chat_message("assistant"):
-                    st.write(response.choices[0].message.content)
-
-        with button_col:
-            # Botón para limpiar la conversación colocado al lado de la ventana del chat
-            if st.button("Limpiar Conversación"):
-                st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
+            # Mostrar la respuesta en la ventana de chat
+            with st.chat_message("assistant"):
+                st.write(response.choices[0].message.content)
