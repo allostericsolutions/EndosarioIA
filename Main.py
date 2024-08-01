@@ -44,7 +44,6 @@ archivo_subido_2 = False
 if uploaded_file_1:
     archivo_subido_1 = True
     text_by_code_1, unique_code_count_1, codes_model = extract_and_clean_text(uploaded_file_1)
-
 if uploaded_file_2:
     archivo_subido_2 = True
     text_by_code_2, unique_code_count_2, _ = extract_and_clean_text(uploaded_file_2)
@@ -55,6 +54,7 @@ if st.sidebar.button("Reiniciar"):
     archivo_subido_2 = False
     st.session_state.chat_history = []
     st.session_state.analysis_loaded = False
+    st.session_state.saludo_enviado = False  # Reiniciar el estado del saludo
 
 # Mostrar la sección de comparación de archivos solo si se han subido ambos archivos
 if archivo_subido_1 and archivo_subido_2:
@@ -127,7 +127,6 @@ if archivo_subido_1 and archivo_subido_2:
             '<td>',
             '<td class="fixed-width" style="border:1px solid black; padding:10px; text-align:left; vertical-align:top;">'
         )
-
         # Aplica estilos a "Documento Modelo" y "Documento Verificación"
         html = html.replace(
             '<th>Documento Modelo</th>',
@@ -137,17 +136,14 @@ if archivo_subido_1 and archivo_subido_2:
             '<th>Documento Verificación</th>',
             '<th style="font-size: 20px; font-weight: bold;">Documento Verificación</th>'
         )
-
         # Agrega estilos CSS para las celdas de similitud numérica
         df["Similitud Numérica"] = df["Similitud Numérica"].str.rstrip('%').astype(float)
         df["Similitud Numérica"] = df["Similitud Numérica"].apply(lambda x: f"{x:.2f}%")
-
         for i, row in df.iterrows():
             html = html.replace(
                 f'<td class="fixed-width" style="border:1px solid black; padding:10px; text-align:left; vertical-align:top;">{row["Similitud Numérica"]}%</td>',
                 f'<td class="fixed-width" style="border:1px solid black; padding:10px; text-align:left; vertical-align:top;">{row["Similitud Numérica"]}</td>'
             )
-
         return html
 
     # Convertir DataFrame a HTML con estilización CSS y HTML modificado
@@ -201,6 +197,14 @@ if archivo_subido_1 and archivo_subido_2:
         st.session_state.chat_history = []
     if "analysis_loaded" not in st.session_state:
         st.session_state.analysis_loaded = False
+    if "saludo_enviado" not in st.session_state:
+        st.session_state.saludo_enviado = False
+
+    # Simular el saludo si no ha sido enviado
+    if not st.session_state.saludo_enviado:
+        st.session_state.chat_history.append({"role": "user", "content": "Hola"})
+        st.session_state.chat_history.append({"role": "assistant", "content": "Hola, soy InteresseAssist Bot. ¿En qué puedo ayudarte?"})
+        st.session_state.saludo_enviado = True
 
     # Cargar el prompt desde el archivo de configuración
     with open("gpt_config/prompt.txt", "r") as f:
@@ -219,6 +223,7 @@ if archivo_subido_1 and archivo_subido_2:
     if selected_code and st.session_state.get("last_selected_code") != selected_code:
         st.session_state.chat_history = []
         st.session_state.last_selected_code = selected_code
+        st.session_state.saludo_enviado = False  # Reiniciar el estado del saludo
 
     if selected_code:
         # Sección para el chat con GPT para cargar el análisis de documentos
@@ -255,6 +260,7 @@ if archivo_subido_1 and archivo_subido_2:
         # Botón para limpiar la conversación colocado en la barra lateral
         if st.sidebar.button("Limpiar Conversación"):
             st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
+            st.session_state.saludo_enviado = False  # Reiniciar el estado del saludo
 
         # Mostrar la ventana de chat excluyendo el prompt del sistema
         for idx, message in enumerate(st.session_state.chat_history[1:]):
