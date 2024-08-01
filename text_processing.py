@@ -84,6 +84,7 @@ def extract_and_clean_text(pdf_path):
         r'MODIFICACIONES\s*A\s*DEFINICIONES',
         r'EXCLUSIÓN\s*PRESTADORES\s*DE\s*SERVICIOS\s*MEDICOS\s*NO\s*RECONOCIDOS,\s*FUERA\s*DE\s*CONVENIO',
         r'A\s*OTROS\s*ENDOSO\s*DE\s*CONTINUIDAD\s*DE\s*NEGOCIO\s*POR\s*RENOVACIÓN',
+        r'A\s*OTROS\s*ENDOSO\s*DE\s*CONTINUIDAD\s*DE\s*NEGOCIO\s*POR\s*CANCELACION\s*ANTICIPADA',
         r'MODIFICACIONES\s*A\s*GASTOS\s*CUBIERTOS\s*HONORARIOS\s*POR\s*CONSULTAS\s*MÉDICAS',
         r'MODIFICACIONES\s*A\s*GASTOS\s*CUBIERTOS\s*PADECIMIENTOS\s*PREEXISTENTES\s*CON\s*PERIODO\s*DE\s*ESPERA',
         r'MODIFICACIONES\s*A\s*OTROS\s*ESTRABISMO',
@@ -140,4 +141,4 @@ def extract_and_clean_text(pdf_path):
         elif current_code:
             text_by_code[current_code] += " " + paragraph
 
-    return text_by_code, len(code_counts), list(code_counts) 
+    return text_by_code, len(code_counts), list(code_counts)
