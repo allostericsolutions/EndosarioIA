@@ -37,7 +37,7 @@ def extract_and_clean_text(pdf_path):
         r'A\s*OTROS\s*HALLUX\s*VALGUS',
         r'A\s*GASTOS\s*CUBIERTOS\s*COBERTURA\s*DE\s*INFECCION\s*VIH\s*Y\/O\s*SIDA',
         r'A\s*GASTOS\s*CUBIERTOS\s*GASTOS\s*DEL\s*DONADOR\s*DE\s*ÓRGANOS\s*EN\s*TRASPLANTE',
-        r'A\s*CLAUSULAS\s*GENERALES\s*MOVIMIENTOS\s*DE\s*ASEGURADOS\s*AUTOADMINISTRADA\s*\(INICIO\s*vs\s*RENOVACIÓN\)',  # Nuevo patrón agregado
+        r'A\s*CLAUSULAS\s*GENERALES\s*MOVIMIENTOS\s*DE\s*ASEGURADOS\s*AUTOADMINISTRADA\s*\(INICIO\s*vs\s*RENOVACIÓN\)',
         r'A\s*GASTOS\s*CUBIERTOS\s*PADECIMIENTOS\s*CONGENITOS',
         r'A\s*GASTOS\s*CUBIERTOS\s*HONORARIOS\s*MÉDICOS\s*Y\/O\s*QUIRÚRGICOS',
         r'A\s*GASTOS\s*CUBIERTOS\s*PADECIMIENTOS\s*PREEXISTENTES',
@@ -108,6 +108,19 @@ def extract_and_clean_text(pdf_path):
         r'GASTOS',
         r'ESTRBISMO',
         r'OTROS',
+        r'TALLA\s*BAJA',
+        r'QUIROPRÁCTICOS',
+        r'COBERTURA\s*ADICIONAL\s*DE\s*AMBULANCIA\s*A\s*ÉREA',
+        r'COMPLICACIONES\s*DEL\s*EMBARAZO,\s*PARTO\s*Y\s*PUERPERIO',
+        r'DEDUCIBLE\s*Y\s*COASEGURO\s*APLICACIÓN\s*DE\s*DEDICIBLE\s*Y\s*COASEGURO',
+        r'A\s*EXCLUSIONES\s*RECIÉN\s*NACIDO\s*SANO',
+        r'NARIZ\s*Y\s*SENOS\s*PARANASALES',
+        r'A\s*CONVERSIÓN\s*A\s*INDIVIDUAL',
+        r'RAZÓN\s*SOCIAL\s*DEL\s*CONTRATANTE',
+        r'PADECIMIENTOS\s*CONGÉNITOS',
+        r'A\s*CLAUSULAS\s*ADICIONALES\s*OPCIO\s*CORRECCIÓN\s*DE\s*LA\s*VISTA',
+        r'A\s*EXCLUSIONES\s*AVIACIÓN\s*PARTICULAR',
+        r'A\s*EXCLUSIONES\s*ABORTO\s*INVOLUNTARIO',
     ]
 
     # Eliminar patrones en mayúsculas
