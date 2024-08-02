@@ -25,7 +25,6 @@ def extract_and_clean_text(pdf_path):
         r'\bCONDICION\s*:\s*',
         r'MODIFICACIONES\s*A\s*DEFINICIONES\s*PERIODO\s*DE\s*GRACIA',
         r'MODIFICACIONES\s*A\s*DEFINICIONES',
-        r'MODIFICACIONES\s*A\s*DEFINICIONES',
         r'MODIFICACIONES',
         r'MODIFICACIONES\s*A\s*OTROS',
         r'A\s*CLAUSULAS\s*GENERALES\s*PAGO\s*DE\s*COMPLEMENTOS\s*ANTERIORES',
@@ -118,7 +117,7 @@ def extract_and_clean_text(pdf_path):
     raw_text = re.sub(r'"\s*[A-Z\s]+\s*"\s*', '', raw_text)
 
     # Agrupar texto por código alfanumérico
-    code_pattern = r'\b[A-Z]{2}\.\d{3}\.\d{3}\b'
+    code_pattern = r'\b[A-Z]{2}\.\d{3}\.(\d{3}|XXX)\b'  # Modificado para incluir solo números o XXX
     text_by_code = {}
     paragraphs = raw_text.split('\n')
     current_code = None
