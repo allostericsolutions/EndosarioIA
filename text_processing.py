@@ -16,7 +16,7 @@ def extract_and_clean_text(pdf_path):
     """
     raw_text = extract_text(pdf_path)
 
-     patterns_to_remove = [
+    patterns_to_remove = [
         r'HOJA\s*:\s*\d+',
         r'G\.M\.M\. GRUPO PROPIA MEDICALIFE',
         r'02001\/M\d+',
@@ -146,7 +146,6 @@ def extract_and_clean_text(pdf_path):
             text_by_code[current_code] += " " + paragraph
 
     return text_by_code, len(code_counts), list(code_counts)
-
 
 # Ejemplo de uso
 # pdf_path = "ruta/al/archivo.pdf"
