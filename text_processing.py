@@ -117,7 +117,7 @@ def extract_and_clean_text(pdf_path):
     # Eliminar texto en mayúsculas entre comillas
     raw_text = re.sub(r'"\s*[A-Z\s]+\s*"\s*', '', raw_text)
 
-    # Agrupar texto por código alfanumérico y modificar la actividad
+    # Agrupar texto por código alfanumérico
     code_pattern = r'\b[A-Z]{2}\.\d{3}\.'  # Patrón para encontrar el código alfanumérico
     text_by_code = {}
     paragraphs = raw_text.split('\n')
@@ -131,10 +131,10 @@ def extract_and_clean_text(pdf_path):
         if code_match:
             current_code = code_match.group(0)
             # Reemplazar partes
-            paragraph = re.sub(code_pattern, '', paragraph).strip()
+            paragraph = re.sub(code_pattern, current_code, paragraph).strip()
 
-            # Eliminar los tres caracteres que siguen al código
-            paragraph = re.sub(r'(?<=\b[A-Z]{2}\.\d{3}\.)[A-Za-z0-9]{3}', '', paragraph).strip()
+            # Aquí eliminamos los tres caracteres que siguen al código
+            paragraph = re.sub(r'(?<=\b[A-Z]{2}\.\d{3}\.)\s*[A-Za-z0-9]{3}\s*', '', paragraph).strip()
 
             if current_code not in text_by_code:
                 text_by_code[current_code] = paragraph
@@ -146,6 +146,7 @@ def extract_and_clean_text(pdf_path):
             text_by_code[current_code] += " " + paragraph
 
     return text_by_code, len(code_counts), list(code_counts)
+
 
 # Ejemplo de uso
 # pdf_path = "ruta/al/archivo.pdf"
