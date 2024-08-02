@@ -1,3 +1,4 @@
+
 import re
 from pdfminer.high_level import extract_text
 
@@ -24,6 +25,7 @@ def extract_and_clean_text(pdf_path):
         r'GO\-2\-021',
         r'\bCONDICION\s*:\s*',
         r'MODIFICACIONES\s*A\s*DEFINICIONES\s*PERIODO\s*DE\s*GRACIA',
+        r'MODIFICACIONES\s*A\s*DEFINICIONES',
         r'MODIFICACIONES\s*A\s*DEFINICIONES',
         r'MODIFICACIONES',
         r'MODIFICACIONES\s*A\s*OTROS',
@@ -117,7 +119,7 @@ def extract_and_clean_text(pdf_path):
     raw_text = re.sub(r'"\s*[A-Z\s]+\s*"\s*', '', raw_text)
 
     # Agrupar texto por código alfanumérico
-    code_pattern = r'\b[A-Z]{2}\.\d{3}\.(\d{3}|XXX)\b'  # Modificado para incluir solo números o XXX
+    code_pattern = r'\b[A-Z]{2}\.\d{3}\.\d{3}\b'
     text_by_code = {}
     paragraphs = raw_text.split('\n')
     current_code = None
