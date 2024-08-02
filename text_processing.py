@@ -16,7 +16,7 @@ def extract_and_clean_text(pdf_path):
     """
     raw_text = extract_text(pdf_path)
 
-    patterns_to_remove = [
+     patterns_to_remove = [
         r'HOJA\s*:\s*\d+',
         r'G\.M\.M\. GRUPO PROPIA MEDICALIFE',
         r'02001\/M\d+',
@@ -37,7 +37,7 @@ def extract_and_clean_text(pdf_path):
         r'A\s*OTROS\s*HALLUX\s*VALGUS',
         r'A\s*GASTOS\s*CUBIERTOS\s*COBERTURA\s*DE\s*INFECCION\s*VIH\s*Y\/O\s*SIDA',
         r'A\s*GASTOS\s*CUBIERTOS\s*GASTOS\s*DEL\s*DONADOR\s*DE\s*ÓRGANOS\s*EN\s*TRASPLANTE',
-        r'A\s*CLAUSULAS\s*GENERALES\s*MOVIMIENTOS\s*DE\s*ASEGURADOS\s*AUTOADMINISTRADA\s*\(INICIO\s*vs\s*RENOVACION\)',
+        r'A\s*CLAUSULAS\s*GENERALES\s*MOVIMIENTOS\s*DE\s*ASEGURADOS\s*AUTOADMINISTRADA\s*\(INICIO\s*vs\s*RENOVACIÓN\)',  # Nuevo patrón agregado
         r'A\s*GASTOS\s*CUBIERTOS\s*PADECIMIENTOS\s*CONGENITOS',
         r'A\s*GASTOS\s*CUBIERTOS\s*HONORARIOS\s*MÉDICOS\s*Y\/O\s*QUIRÚRGICOS',
         r'A\s*GASTOS\s*CUBIERTOS\s*PADECIMIENTOS\s*PREEXISTENTES',
