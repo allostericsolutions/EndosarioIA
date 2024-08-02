@@ -119,7 +119,7 @@ def extract_and_clean_text(pdf_path):
     raw_text = re.sub(r'"\s*[A-Z\s]+\s*"\s*', '', raw_text)
 
     # Agrupar texto por código alfanumérico
-    code_pattern = r'\b[A-Z]{2}\.\d{3}\.\d{3}\b'
+    code_pattern = r'\b[A-Z]{2}\.\d{3}\.'
     text_by_code = {}
     paragraphs = raw_text.split('\n')
     current_code = None
