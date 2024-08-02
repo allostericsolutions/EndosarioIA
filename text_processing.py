@@ -98,6 +98,7 @@ def extract_and_clean_text(pdf_path):
         r'CUBIERTOS',
         r'GASTOS',
         r'ESTRBISMO',
+        r'ESTRABISMO',
         r'OTROS',
         r'TALLA\s*BAJA',
         r'QUIROPRÁCTICOS',
