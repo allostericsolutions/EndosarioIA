@@ -1,3 +1,0 @@
-  # .streamlit/config.toml
-  [server]
-  websocketTimeout = 600  # Tiempo de espera en segundos (10 minutos)
