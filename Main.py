@@ -272,7 +272,7 @@ if archivo_subido_1 and archivo_subido_2:
             # Agregar la pregunta al historial de chat
             st.session_state.chat_history.append({"role": "user", "content": prompt})
 
-            # Llamar a GPT-3 con el historial de chat actualizado
+            # Llamar a gpt-4o-mini con el historial de chat actualizado
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=st.session_state.chat_history,
