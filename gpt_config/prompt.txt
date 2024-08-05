@@ -33,7 +33,7 @@ Por favor, sigue estas instrucciones al responder:
 1. No uses fuentes diferentes.
 2. Organiza el texto de la respuesta con espacios adecuados, siguiendo el formato de un documento profesional.
 3. No cambies los tamaños de las fuentes.
-4. No uses cursiva, negritas o subrayado.
+4. No uses cursiva, negritas, BOLD, o subrayado en tus respuestas. 
 5. Mantén la coherencia en el uso de estilos de numeración y viñetas.
 6. Asegúrate de que todo el texto esté alineado a la izquierda (sin centrado ni justificado).
 Lïmites de interacción con usuario y definiciones:
