@@ -84,8 +84,8 @@ def extract_and_clean_text(pdf_path):
         r'A\s*EXCLUSIONES\s*MENOPAUSIA',
         r'A\s*OTROS\s*LESIONES\s*PIGMENTARIAS\s*Y\s*LUNARES',
         r'A\s*OTROS\s*ACNÉ',
-        r'A\s*GASTOS\s*CUBIERTOS\s*COBERTURA\s*DE\s*DAÑO\s*PSIQUIÁTRICO',
-        r'A\s*OTROS\s*AMÍGDALAS\s*Y\s*ADENOIDES',
+        r'A\s*GASTOS\s*CUBIERTOS\s*COBERTURA\s*DE\s*DAÑO\s*PSIQUIATRICO',
+        r'A\s*OTROS\s*AMIGDALAS\s*Y\s*ADENOIDES',
         r'A\s*GASTOS\s*CUBIERTOS\s*MEDICAMENTOS',
         r'A\s*EXCLUSIONES\s*ACUPUNTURISTAS',
         r'A\s*EXCLUSIONES\s*VITAMINAS\s*Y\s*COMPLEMENTOS\s*ALIMENTICIOS',
@@ -114,10 +114,11 @@ def extract_and_clean_text(pdf_path):
         r'A\s*EXCLUSIONES\s*AVIACIÓN\s*PARTICULAR',
         r'A\s*EXCLUSIONES\s*ABORTO\s*INVOLUNTARIO',
     ]
-    
+
+    # Eliminar patrones en mayúsculas
     for pattern in patterns_to_remove:
         raw_text = re.sub(pattern, '', raw_text)
-    
+
     # Eliminar texto en mayúsculas entre comillas
     raw_text = re.sub(r'"\s*[A-Z\s]+\s*"\s*', '', raw_text)
 
@@ -136,9 +137,10 @@ def extract_and_clean_text(pdf_path):
             current_code = code_match.group(0)
             # Reemplazar partes
             paragraph = re.sub(code_pattern, current_code, paragraph).strip()
+
             # Aquí eliminamos los tres caracteres que siguen al código
             paragraph = re.sub(r'(?<=\b[A-Z]{2}\.\d{3}\.)\s*[A-Za-z0-9]{3}\s*', '', paragraph).strip()
-            
+
             if current_code not in text_by_code:
                 text_by_code[current_code] = paragraph
             else:
@@ -147,5 +149,7 @@ def extract_and_clean_text(pdf_path):
             code_counts.add(current_code)
         elif current_code:
             text_by_code[current_code] += " " + paragraph
-        
+
     return text_by_code, len(code_counts), list(code_counts)
+
+
