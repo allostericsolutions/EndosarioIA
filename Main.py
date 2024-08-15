@@ -3,11 +3,11 @@ from pdfminer.high_level import extract_text
 import pandas as pd
 import re
 from nameExtraction.extractNames import extractUppercaseNames  # Importar la nueva función
-from textProcessing import extract_and_clean_text  # Asegurarse de usar el archivo de acuerdo al correcto import
-from fileUtils.fileCreators import create_excel, create_csv, create_txt
-from fileUtils.imageUtils import mostrar_imagen
-from gptConfig.openaiSetup import initialize_openai
-from fileUtils.textProcessing.textProcessing import preprocess_text, calculate_semantic_similarity, extract_and_align_numbers_with_context, calculate_numbers_similarity
+from text_processing import extract_and_clean_text  # Asegurarse de usar el archivo de acuerdo al correcto import
+from file_utils.file_creators import create_excel, create_csv, create_txt
+from file_utils.image_utils import mostrar_imagen
+from gpt_config.openai_setup import initialize_openai
+from file_utils.text_processing.text_processing import preprocess_text, calculate_semantic_similarity, extract_and_align_numbers_with_context, calculate_numbers_similarity
 
 # Inicializar el cliente de OpenAI
 client = initialize_openai()
