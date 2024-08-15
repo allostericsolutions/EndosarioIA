@@ -3,11 +3,11 @@ from pdfminer.high_level import extract_text
 import pandas as pd
 import re
 from nameExtraction.extractNames import extractUppercaseNames  # Importar la nueva función
-from text_processing import extract_and_clean_text
-from file_utils.file_creators import create_excel, create_csv, create_txt
-from file_utils.image_utils import mostrar_imagen
-from gpt_config.openai_setup import initialize_openai
-from file_utils.text_processing.text_processing import preprocess_text, calculate_semantic_similarity, extract_and_align_numbers_with_context, calculate_numbers_similarity
+from textProcessing import extract_and_clean_text  # Asegurarse de usar el archivo de acuerdo al correcto import
+from fileUtils.fileCreators import create_excel, create_csv, create_txt
+from fileUtils.imageUtils import mostrar_imagen
+from gptConfig.openaiSetup import initialize_openai
+from fileUtils.textProcessing.textProcessing import preprocess_text, calculate_semantic_similarity, extract_and_align_numbers_with_context, calculate_numbers_similarity
 
 # Inicializar el cliente de OpenAI
 client = initialize_openai()
@@ -24,17 +24,23 @@ with st.sidebar.expander("Información", expanded=True):
     width = 300
     mostrar_imagen(image_path, caption, width)
 
+# Placeholder para subir archivos y evitar errores iniciales
+archivo_subido_1 = None
+archivo_subido_2 = None
+text_by_code_1 = {}
+text_by_code_2 = {}
+names_by_code = {}
+
 # Subida de archivos PDF
 uploaded_file_1 = st.file_uploader("PEI", type=["pdf"], key="uploader1")
 uploaded_file_2 = st.file_uploader("Metlife", type=["pdf"], key="uploader2")
-
-archivo_subido_1 = False
-archivo_subido_2 = False
 
 # Procesar el archivo "PEI"
 if uploaded_file_1:
     archivo_subido_1 = True
     text_by_code_1, unique_code_count_1, codes_model = extract_and_clean_text(uploaded_file_1)
+else:
+    st.warning("Por favor, suba el archivo PEI.")
 
 # Procesar el archivo "Metlife"
 if uploaded_file_2:
@@ -44,11 +50,13 @@ if uploaded_file_2:
     # Extraer los nombres en mayúsculas del texto extraído de "Metlife"
     metlife_text = extract_text(uploaded_file_2)
     names_by_code = extractUppercaseNames(metlife_text)  # Guardar los nombres extraídos en un diccionario
+else:
+    st.warning("Por favor, suba el archivo Metlife.")
 
 # Botón para reiniciar
 if st.sidebar.button("Reiniciar"):
-    archivo_subido_1 = False
-    archivo_subido_2 = False
+    archivo_subido_1 = None
+    archivo_subido_2 = None
     st.session_state.chat_history = []
     st.session_state.analysis_loaded = False
     st.session_state.saludo_enviado = False  # Reiniciar el estado del saludo
@@ -58,10 +66,7 @@ if archivo_subido_1 and archivo_subido_2:
     all_codes = set(text_by_code_1.keys()).union(set(text_by_code_2.keys()))
 
     def handle_long_text(text, length=70):
-        if len(text) > length:
-            return f'<details><summary>Endoso</summary>{text}</details>'
-        else:
-            return text
+        return f'<details><summary>Endoso</summary>{text}</details>' if len(text) > length else text
 
     comparison_data = []
     for code in all_codes:
@@ -71,12 +76,8 @@ if archivo_subido_1 and archivo_subido_2:
         doc2_text_display = handle_long_text(doc2_text)
         name = names_by_code.get(code, "")
 
-        if doc1_text == "Ausente" or doc2_text == "Ausente":
-            sim_percentage = 0
-            similarity_str = "0.00%"
-        else:
-            sim_percentage = calculate_semantic_similarity(doc1_text, doc2_text)
-            similarity_str = f'{sim_percentage:.2f}%'
+        sim_percentage = calculate_semantic_similarity(doc1_text, doc2_text) if doc1_text != "Ausente" and doc2_text != "Ausente" else 0
+        similarity_str = f'{sim_percentage:.2f}%'
 
         if doc1_text == "Ausente" or doc2_text == "Ausente":
             num_similarity_percentage = 0
@@ -104,29 +105,15 @@ if archivo_subido_1 and archivo_subido_2:
 
     def generate_html_table(df):
         html = df.to_html(index=False, escape=False, render_links=True)
-        html = html.replace(
-            '<table border="1" class="dataframe">',
-            '<table border="1" class="dataframe" style="width:100%; border-collapse:collapse;">'
-        ).replace(
-            '<thead>',
-            '<thead style="position: sticky; top: 0; z-index: 1; background: #fff;">'
-        ).replace(
-            '<th>',
-            '<th class="fixed-width" style="background-color:#f2f2f2; padding:10px; text-align:left; z-index: 1;">'
-        ).replace(
-            '<td>',
-            '<td class="fixed-width" style="border:1px solid black; padding:10px; text-align:left; vertical-align:top;">'
-        )
-        html = html.replace(
-            '<th>Documento PEI</th>',
-            '<th style="font-size: 20px; font-weight: bold;">Documento PEI</th>'
-        )
-        html = html.replace(
-            '<th>Documento Metlife</th>',
-            '<th style="font-size: 20px; font-weight: bold;">Documento Metlife</th>'
-        )
-        df["Similitud Numérica"] = df["Similitud Numérica"].str.rstrip('%').astype(float)
-        df["Similitud Numérica"] = df["Similitud Numérica"].apply(lambda x: f"{x:.2f}%")
+        html = (html.replace('<table border="1" class="dataframe">',
+                            '<table border="1" class="dataframe" style="width:100%; border-collapse:collapse;">')
+                    .replace('<thead>', '<thead style="position: sticky; top: 0; z-index: 1; background: #fff;">')
+                    .replace('<th>', '<th class="fixed-width" style="background-color:#f2f2f2; padding:10px; text-align:left; z-index: 1;">')
+                    .replace('<td>', '<td class="fixed-width" style="border:1px solid black; padding:10px; text-align:left; vertical-align:top;">')
+                    .replace('<th>Documento PEI</th>', '<th style="font-size: 20px; font-weight: bold;">Documento PEI</th>')
+                    .replace('<th>Documento Metlife</th>', '<th style="font-size: 20px; font-weight: bold;">Documento Metlife</th>'))
+
+        df["Similitud Numérica"] = df["Similitud Numérica"].str.rstrip('%').astype(float).apply(lambda x: f"{x:.2f}%")
         for i, row in df.iterrows():
             html = html.replace(
                 f'<td class="fixed-width" style="border:1px solid black; padding:10px; text-align:left; vertical-align:top;">{row["Similitud Numérica"]}%</td>',
@@ -178,6 +165,7 @@ if archivo_subido_1 and archivo_subido_2:
 
 st.markdown("### InteresseAssist Bot")
 
+# Inicializar el estado del chat
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 if "analysis_loaded" not in st.session_state:
@@ -185,9 +173,12 @@ if "analysis_loaded" not in st.session_state:
 if "saludo_enviado" not in st.session_state:
     st.session_state.saludo_enviado = False
 
+# Enviar saludo inicial del bot
 if not st.session_state.saludo_enviado:
-    st.session_state.chat_history.append({"role": "user", "content": "Hola"})
-    st.session_state.chat_history.append({"role": "assistant", "content": "Hola, soy InteresseAssist Bot. ¿En qué puedo ayudarte?"})
+    st.session_state.chat_history.extend([
+        {"role": "user", "content": "Hola"},
+        {"role": "assistant", "content": "Hola, soy InteresseAssist Bot. ¿En qué puedo ayudarte?"}
+    ])
     st.session_state.saludo_enviado = True
 
 with open("gpt_config/prompt.txt", "r") as f:
@@ -195,62 +186,64 @@ with open("gpt_config/prompt.txt", "r") as f:
 
 print(f"prompt_base: {prompt_base}")
 
-filtered_codes = list(set(text_by_code_1.keys()) & set(text_by_code_2.keys()))
+# Esperar a que ambos archivos sean subidos
+if archivo_subido_1 and archivo_subido_2:
+    filtered_codes = list(set(text_by_code_1.keys()) & set(text_by_code_2.keys()))
 
-selected_code = st.selectbox("Selecciona un código:", filtered_codes, key="selected_code")
+    selected_code = st.selectbox("Selecciona un código:", filtered_codes, key="selected_code")
 
-if selected_code and st.session_state.get("last_selected_code") != selected_code:
-    st.session_state.chat_history = []
-    st.session_state.last_selected_code = selected_code
-    st.session_state.saludo_enviado = False  # Reiniciar el estado del saludo
-
-if selected_code:
-    st.markdown("### Cargar Análisis de Documentos")
-
-    texto_modelo = text_by_code_1.get(selected_code, "Ausente")
-    texto_verificacion = text_by_code_2.get(selected_code, "Ausente")
-    with st.expander("Mostrar Textos Filtrados"):
-        st.markdown(f"**Documento PEI:** {texto_modelo}")
-        st.markdown(f"**Documento Metlife:** {texto_verificacion}")
-
-    texto_modelo_con_codigo = f"Código: {selected_code}\n\n{texto_modelo}"
-    texto_verificacion_con_codigo = f"Código: {selected_code}\n\n{texto_verificacion}"
-
-    info_analisis = {
-        "texto_modelo": texto_modelo_con_codigo,
-        "texto_verificacion": texto_verificacion_con_codigo,
-        "fila_comparacion": "",  # No se necesita en este caso
-    }
-    prompt_final = prompt_base.format(**info_analisis)
-
-    if st.button("Enviar para Análisis"):
-        st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
-        st.session_state.analysis_loaded = True
-
-if st.session_state.analysis_loaded:
-    st.markdown("### Interactuar con InteresseAssist Bot")
-
-    if st.sidebar.button("Limpiar Conversación"):
-        st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
+    if selected_code and st.session_state.get("last_selected_code") != selected_code:
+        st.session_state.chat_history = []
+        st.session_state.last_selected_code = selected_code
         st.session_state.saludo_enviado = False  # Reiniciar el estado del saludo
 
-    for idx, message in enumerate(st.session_state.chat_history[1:]):
-        with st.chat_message(message["role"]):
-            st.write(message["content"])
+    if selected_code:
+        st.markdown("### Cargar Análisis de Documentos")
 
-    if prompt := st.chat_input("Haz tu pregunta:"):
-        st.session_state.chat_history.append({"role": "user", "content": prompt})
+        texto_modelo = text_by_code_1.get(selected_code, "Ausente")
+        texto_verificacion = text_by_code_2.get(selected_code, "Ausente")
+        with st.expander("Mostrar Textos Filtrados"):
+            st.markdown(f"**Documento PEI:** {texto_modelo}")
+            st.markdown(f"**Documento Metlife:** {texto_verificacion}")
 
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=st.session_state.chat_history,
-            max_tokens=1200,
-            temperature=0.2,
-        )
+        texto_modelo_con_codigo = f"Código: {selected_code}\n\n{texto_modelo}"
+        texto_verificacion_con_codigo = f"Código: {selected_code}\n\n{texto_verificacion}"
 
-        st.session_state.chat_history.append(
-            {"role": "assistant", "content": response.choices[0].message.content}
-        )
+        info_analisis = {
+            "texto_modelo": texto_modelo_con_codigo,
+            "texto_verificacion": texto_verificacion_con_codigo,
+            "fila_comparacion": "",  # No se necesita en este caso
+        }
+        prompt_final = prompt_base.format(**info_analisis)
 
-        with st.chat_message("assistant"):
-            st.write(response.choices[0].message.content)
+        if st.button("Enviar para Análisis"):
+            st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
+            st.session_state.analysis_loaded = True
+
+    if st.session_state.analysis_loaded:
+        st.markdown("### Interactuar con InteresseAssist Bot")
+
+        if st.sidebar.button("Limpiar Conversación"):
+            st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
+            st.session_state.saludo_enviado = False  # Reiniciar el estado del saludo
+
+        for idx, message in enumerate(st.session_state.chat_history[1:]):
+            with st.chat_message(message["role"]):
+                st.write(message["content"])
+
+        if prompt := st.chat_input("Haz tu pregunta:"):
+            st.session_state.chat_history.append({"role": "user", "content": prompt})
+
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=st.session_state.chat_history,
+                max_tokens=1200,
+                temperature=0.2,
+            )
+
+            st.session_state.chat_history.append(
+                {"role": "assistant", "content": response.choices[0].message.content}
+            )
+
+            with st.chat_message("assistant"):
+                st.write(response.choices[0].message.content)
