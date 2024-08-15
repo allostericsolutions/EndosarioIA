@@ -39,17 +39,24 @@ uploaded_file_2 = st.file_uploader("Metlife", type=["pdf"], key="uploader2")
 if uploaded_file_1:
     archivo_subido_1 = True
     text_by_code_1, unique_code_count_1, codes_model = extract_and_clean_text(uploaded_file_1)
+    st.success("Archivo PEI Cargado y Procesado")
 else:
     st.warning("Por favor, suba el archivo PEI.")
 
 # Procesar el archivo "Metlife"
 if uploaded_file_2:
     archivo_subido_2 = True
-    text_by_code_2, unique_code_count_2, _ = extract_and_clean_text(uploaded_file_2)
-    
-    # Extraer los nombres en mayúsculas del texto extraído de "Metlife"
     metlife_text = extract_text(uploaded_file_2)
+    text_by_code_2, unique_code_count_2, _ = extract_and_clean_text(uploaded_file_2)
+    st.success("Archivo Metlife Cargado y Procesado")
+
+    # Extraer los nombres en mayúsculas del texto extraído de "Metlife"
+    st.info("Extrayendo nombres de endosos del documento Metlife...")
     names_by_code = extractUppercaseNames(metlife_text)  # Guardar los nombres extraídos en un diccionario
+
+    # Debugging: Imprimir para asegurar que los nombres son extraídos
+    st.write(f"Metlife Text: {metlife_text[:500]}...")  # Mostrar los primeros 500 caracteres del texto
+    st.write(f"Names by Code: {names_by_code}")
 else:
     st.warning("Por favor, suba el archivo Metlife.")
 
@@ -160,11 +167,8 @@ if archivo_subido_1 and archivo_subido_2:
                 file_name="comparison.txt",
                 mime="text/plain"
             )
-
 # InteresseAssist Bot
-
 st.markdown("### InteresseAssist Bot")
-
 # Inicializar el estado del chat
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
@@ -183,8 +187,6 @@ if not st.session_state.saludo_enviado:
 
 with open("gpt_config/prompt.txt", "r") as f:
     prompt_base = f.read()
-
-print(f"prompt_base: {prompt_base}")
 
 # Esperar a que ambos archivos sean subidos
 if archivo_subido_1 and archivo_subido_2:
