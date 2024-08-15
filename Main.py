@@ -33,8 +33,8 @@ with st.sidebar.expander("Información", expanded=True):
     mostrar_imagen(image_path, caption, width)
 
 # Subir los dos archivos PDF
-uploaded_file_1 = st.file_uploader("Modelo", type=["pdf"], key="uploader1")
-uploaded_file_2 = st.file_uploader("Verificación", type=["pdf"], key="uploader2")
+uploaded_file_1 = st.file_uploader("PEI", type=["pdf"], key="uploader1")
+uploaded_file_2 = st.file_uploader("Metlife", type=["pdf"], key="uploader2")
 
 # Variables para manejar el estado de los archivos subidos
 archivo_subido_1 = False
@@ -99,10 +99,10 @@ if archivo_subido_1 and archivo_subido_2:
         # Agregar los datos a la tabla comparativa
         row = {
             "Código": f'<b><span style="color:red;">{code}</span></b>',
-            "Documento Modelo": doc1_text_display if doc1_text != "Ausente" else f'<b style="color:red;">Ausente</b>',
-            "Valores numéricos Modelo": f'<details><summary>Contexto</summary>{doc1_num_display}</details>',
-            "Documento Verificación": doc2_text_display if doc2_text != "Ausente" else f'<b style="color:red;">Ausente</b>',
-            "Valores numéricos Verificación": f'<details><summary>Contexto</summary>{doc2_num_display}</details>',
+            "Documento PEI": doc1_text_display if doc1_text != "Ausente" else f'<b style="color:red;">Ausente</b>',
+            "Valores numéricos PEI": f'<details><summary>Contexto</summary>{doc1_num_display}</details>',
+            "Documento Metlife": doc2_text_display if doc2_text != "Ausente" else f'<b style="color:red;">Ausente</b>',
+            "Valores numéricos Metlife": f'<details><summary>Contexto</summary>{doc2_num_display}</details>',
             "Similitud Texto": similarity_str,
             "Similitud Numérica": f'{num_similarity_percentage:.2f}%'
         }
@@ -127,14 +127,14 @@ if archivo_subido_1 and archivo_subido_2:
             '<td>',
             '<td class="fixed-width" style="border:1px solid black; padding:10px; text-align:left; vertical-align:top;">'
         )
-        # Aplica estilos a "Documento Modelo" y "Documento Verificación"
+        # Aplica estilos a "Documento PEI" y "Documento Metlife"
         html = html.replace(
-            '<th>Documento Modelo</th>',
-            '<th style="font-size: 20px; font-weight: bold;">Documento Modelo</th>'
+            '<th>Documento PEI</th>',
+            '<th style="font-size: 20px; font-weight: bold;">Documento PEI</th>'
         )
         html = html.replace(
-            '<th>Documento Verificación</th>',
-            '<th style="font-size: 20px; font-weight: bold;">Documento Verificación</th>'
+            '<th>Documento Metlife</th>',
+            '<th style="font-size: 20px; font-weight: bold;">Documento Metlife</th>'
         )
         # Agrega estilos CSS para las celdas de similitud numérica
         df["Similitud Numérica"] = df["Similitud Numérica"].str.rstrip('%').astype(float)
@@ -153,8 +153,8 @@ if archivo_subido_1 and archivo_subido_2:
 
     # Mostrar el conteo de códigos únicos en cada documento
     st.markdown("### Conteo de Códigos")
-    st.write(f"**Documento Modelo:** {unique_code_count_1} (Faltan: {', '.join(list(all_codes - set(codes_model)))})")
-    st.write(f"**Documento Verificación:** {unique_code_count_2} (Faltan: {', '.join(list(all_codes - set(text_by_code_2.keys())))})")
+    st.write(f"**Documento PEI:** {unique_code_count_1} (Faltan: {', '.join(list(all_codes - set(codes_model)))})")
+    st.write(f"**Documento Metlife:** {unique_code_count_2} (Faltan: {', '.join(list(all_codes - set(text_by_code_2.keys())))})")
 
     # Botones para descargar los archivos de comparación en diferentes formatos
     col1, col2, col3 = st.columns(3)
@@ -233,8 +233,8 @@ if archivo_subido_1 and archivo_subido_2:
         texto_modelo = text_by_code_1.get(selected_code, "Ausente")
         texto_verificacion = text_by_code_2.get(selected_code, "Ausente")
         with st.expander("Mostrar Textos Filtrados"):
-            st.markdown(f"**Documento Modelo:** {texto_modelo}")
-            st.markdown(f"**Documento Verificación:** {texto_verificacion}")
+            st.markdown(f"**Documento PEI:** {texto_modelo}")
+            st.markdown(f"**Documento Metlife:** {texto_verificacion}")
 
         # Incluir el código en los textos antes de enviarlos para análisis
         texto_modelo_con_codigo = f"Código: {selected_code}\n\n{texto_modelo}"
