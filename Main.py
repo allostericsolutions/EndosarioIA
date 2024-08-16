@@ -281,9 +281,17 @@ if archivo_subido_1 and archivo_subido_2:
             with st.chat_message("assistant"):
                 st.write(response.choices[0].message.content)
                 
-# Fragmento del Quijote
-st.markdown("---")
-st.markdown("***")
-st.markdown("### Un fragmento del Quijote:")
-st.markdown("> *Y al fin, Sancho, dijo don Quijote, acuérdate de lo que te he dicho siempre: la virtud es su propia recompensa, y los que la siguen nunca quedan sin ella.*")
-st.markdown("***")
+# Fragmento del Quijote en la barra lateral
+with st.sidebar:
+    st.markdown("---")
+    st.markdown("***")
+    st.markdown("### Un fragmento del Quijote:")
+    st.markdown(
+        "> *Y al fin, Sancho, dijo don Quijote, acuérdate de lo que te he dicho siempre: la virtud es su propia recompensa, y los que la siguen nunca quedan sin ella.*",
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        "<font size='1'><i>(Don Quijote de la Mancha, Parte II)</i></font>",
+        unsafe_allow_html=True,
+    )
+    st.markdown("***")
