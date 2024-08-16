@@ -44,9 +44,10 @@ archivo_subido_2 = False
 if uploaded_file_1:
     archivo_subido_1 = True
     text_by_code_1, unique_code_count_1, codes_model = extract_and_clean_text(uploaded_file_1)
+
 if uploaded_file_2:
     archivo_subido_2 = True
-    text_by_code_2, unique_code_count_2, _ = extract_and_clean_text(uploaded_file_2)
+    text_by_code_2, unique_code_count_2, _, endoso_names_metlife = extract_and_clean_text(uploaded_file_2)
 
 # Botón para reiniciar la aplicación
 if st.sidebar.button("Reiniciar"):
@@ -58,7 +59,6 @@ if st.sidebar.button("Reiniciar"):
 
 # Mostrar la sección de comparación de archivos solo si se han subido ambos archivos
 if archivo_subido_1 and archivo_subido_2:
-    
     # Obtener todos los códigos únicos presentes en ambos documentos
     all_codes = set(text_by_code_1.keys()).union(set(text_by_code_2.keys()))
 
@@ -77,6 +77,9 @@ if archivo_subido_1 and archivo_subido_2:
         doc2_text = text_by_code_2.get(code, "Ausente")
         doc2_text_display = handle_long_text(doc2_text)
 
+        # Obtener el nombre del endoso para Metlife
+        endoso_metlife = endoso_names_metlife.get(code, "N/A")
+        
         # Si un texto no está presente, el porcentaje de similitud textual es 0
         if doc1_text == "Ausente" or doc2_text == "Ausente":
             sim_percentage = 0
@@ -96,12 +99,12 @@ if archivo_subido_1 and archivo_subido_2:
             doc2_num_display = f'<details><summary>{doc2_num}</summary><p>{doc2_context}</p></details>'
             num_similarity_percentage = calculate_numbers_similarity(doc1_num, doc2_num)
 
-        # Agregar los datos a la tabla comparativa
         row = {
             "Código": f'<b><span style="color:red;">{code}</span></b>',
-            "Documento PEI": f'<span style="font-size:16px; font-weight:bold;">{doc1_text_display if doc1_text != "Ausente" else f"<b style=\'color:red;\'>Ausente</b>"}</span>',
+            "Nombre del Endoso (Metlife)": endoso_metlife,
+            "Documento PEI": doc1_text_display if doc1_text != "Ausente" else f'<b style="color:red;">Ausente</b>',
             "Valores numéricos PEI": f'<details><summary>Contexto</summary>{doc1_num_display}</details>',
-            "Documento Metlife": f'<span style="font-size:16px; font-weight:bold;">{doc2_text_display if doc2_text != "Ausente" else f"<b style=\'color:red;\'>Ausente</b>"}</span>',
+            "Documento Metlife": doc2_text_display if doc2_text != "Ausente" else f'<b style="color:red;">Ausente</b>',
             "Valores numéricos Metlife": f'<details><summary>Contexto</summary>{doc2_num_display}</details>',
             "Similitud Texto": similarity_str,
             "Similitud Numérica": f'{num_similarity_percentage:.2f}%'
