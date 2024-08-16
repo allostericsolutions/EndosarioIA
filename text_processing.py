@@ -113,7 +113,12 @@ def extract_and_clean_text(pdf_path):
         r'A\s*CLAUSULAS\s*ADICIONALES\s*OPCIO\s*CORRECCIÓN\s*DE\s*LA\s*VISTA',
         r'A\s*EXCLUSIONES\s*AVIACIÓN\s*PARTICULAR',
         r'A\s*EXCLUSIONES\s*ABORTO\s*INVOLUNTARIO',
-    ]
+        # Agregado
+        r'A\s*DEDUCIBLE\s*Y\s*COASEGURO\s*APLICACIÓN\s*DE\s*DEDUCIBLE\s*Y\s*COASEGURO',  
+        r'XXX',  
+        r'HOMEÓPATAS',
+        r'A\s*CLAUSULAS\s*ADICIONALES\s*OPCIO\s*CLÁUSULA\s*DE\s*EMERGENCIA\s*EN\s*EL\s*EXTRANJERO',
+        ]
 
     # Eliminar patrones en mayúsculas
     for pattern in patterns_to_remove:
@@ -151,4 +156,3 @@ def extract_and_clean_text(pdf_path):
             text_by_code[current_code] += " " + paragraph
 
     return text_by_code, len(code_counts), list(code_counts)
-
