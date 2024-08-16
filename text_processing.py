@@ -4,19 +4,21 @@ from pdfminer.high_level import extract_text
 def extract_and_clean_text(pdf_path):
     """
     Extrae el texto de un PDF y lo limpia eliminando patrones específicos.
+
     Args:
         pdf_path (str): La ruta al archivo PDF.
+
     Returns:
         tuple: Una tupla que contiene:
             - dict: Un diccionario donde las claves son códigos alfanuméricos
               y los valores son el texto asociado a cada código.
             - int: El número total de códigos únicos encontrados.
-            - list: Una lista de todos los códigos únicos encontrados.
+            - list: Una lista de todos los códigos únicos.
             - dict: Un diccionario donde las claves son códigos alfanuméricos
               y los valores son los nombres de los endosos.
     """
     raw_text = extract_text(pdf_path)
-
+    
     patterns_to_remove = [
         r'HOJA\s*:\s*\d+',
         r'G\.M\.M\. GRUPO PROPIA MEDICALIFE',
@@ -25,13 +27,13 @@ def extract_and_clean_text(pdf_path):
         r'GO\-2\-021',
         r'\bCONDICION\s*:\s*',
         r'MODIFICACIONES\s*A\s*DEFINICIONES\s*PERIODO\s*DE\s*GRACIA',
-        r'MODIFICACIONES\s*A\s*DEFINICIONES',  # Mantenido solo una vez
+        r'MODIFICACIONES\s*A\s*DEFINICIONES',
         r'MODIFICACIONES',
         r'MODIFICACIONES\s*A\s*OTROS',
         r'A\s*CLAUSULAS\s*GENERALES\s*PAGO\s*DE\s*COMPLEMENTOS\s*ANTERIORES',
-        r'A\s*GASTOS\s*CUBIERTOS\s*MATERNIDAD',  # Mantenido solo una vez
-        r'A\s*EXCLUSIONES\s*MOTOCICLISMO',  # Mantenido solo una vez
-        r'A\s*CLAUSULAS\s*ADICIONALES\s*OPCIO\s*CORRECCION\s*DE\s*LA\s*VISTA',  # Mantenido solo una vez
+        r'A\s*GASTOS\s*CUBIERTOS\s*MATERNIDAD',
+        r'A\s*EXCLUSIONES\s*MOTOCICLISMO',
+        r'A\s*CLAUSULAS\s*ADICIONALES\s*OPCIO\s*CORRECCION\s*DE\s*LA\s*VISTA',
         r'A\s*OTROS\s*HALLUX\s*VALGUS',
         r'A\s*GASTOS\s*CUBIERTOS\s*COBERTURA\s*DE\s*INFECCION\s*VIH\s*Y\/O\s*SIDA',
         r'A\s*GASTOS\s*CUBIERTOS\s*GASTOS\s*DEL\s*DONADOR\s*DE\s*ÓRGANOS\s*EN\s*TRASPLANTE',
@@ -43,8 +45,8 @@ def extract_and_clean_text(pdf_path):
         r'A\s*DEDUCIBLE\s*Y\s*COASEGURO\s*APLICACION\s*DE\s*DEDUCIBLE\s*Y\s*COASEGURO',
         r'A\s*GASTOS\s*CUBIERTOS\s*CIRCUNCISION\s*NO\s*PROFILACTICA',
         r'A\s*CLAUSULAS\s*ADICIONALES\s*OPCIO\s*CLAUSULA\s*DE\s*EMERGENCIA\s*EN\s*EL\s*EXTRANJERO',
-        r'EXCLUSION\s*PRESTADORES\s*DE\s*SERVICIOS\s*MEDICOS\s*NO\s*RECONOCIDOS,\s*FUERA\s*DE\s*CONVENIO',  # Mantenido solo una vez
-        r'EXCLUSIÓN\s*PRESTADORES\s*DE?\s*SERVICIOS\s*MEDICOS\s*NO\s*RECONOCIDOS,\s*FUERA\s*DE\s*CONVENIO',  # Mantenido solo una vez
+        r'EXCLUSION\s*PRESTADORES\s*DE\s*SERVICIOS\s*MEDICOS\s*NO\s*RECONOCIDOS,\s*FUERA\s*DE\s*CONVENIO',
+        r'EXCLUSIÓN\s*PRESTADORES\s*DE?\s*SERVICIOS\s*MEDICOS\s*NO\s*RECONOCIDOS,\s*FUERA\s*DE\s*CONVENIO',
         r'CON\s*PERIODO\s*DE\s*ESPERA',
         r'A\s*GASTOS\s*CUBIERTOS\s*CIRUGIA\s*DE\s*NARIZ\s*Y\s*SENOS\s*PARANASALES',
         r'A\s*OTROS\s*FRANJA\s*FRONTERIZA',
@@ -65,7 +67,7 @@ def extract_and_clean_text(pdf_path):
         r'A\s*EXCLUSIONES\s*AVIACION\s*PARTICULAR',
         r'A\s*EXCLUSIONES\s*ASALTO',
         r'A\s*GASTOS\s*CUBIERTOS\s*TRANSPLANTE\s*DE\s*ÓRGANOS',
-        r'EXCLUSIN\s*PRESTADORES\s*DE\s*SERVICIOS\s*MEDICOS\s*NO\s*RECONOCIDOS,\s*FUERA\s*DE\s*CONVENIO',  # Mantenido solo una vez
+        r'EXCLUSIN\s*PRESTADORES\s*DE\s*SERVICIOS\s*MEDICOS\s*NO\s*RECONOCIDOS,\s*FUERA\s*DE\s*CONVENIO',
         r'A\s*GASTOS\s*CUBIERTOS\s*RECIEN\s*NACIDO\s*PREMATURO',
         r'COBERTURA\s*DE\s*DAO\s*PSIQUIATRICO',
         r'REGISTRO\s*DE\s*CONDICIONES\s*GENERALES',
@@ -77,7 +79,7 @@ def extract_and_clean_text(pdf_path):
         r'A\s*OTROS\s*CLNICA\s*DE\s*LA\s*COLUMNA',
         r'A\s*OTROS\s*ENDOSO\s*DE\s*CONTINUIDAD\s*DE\s*NEGOCIO\s*POR\s*RENOVACIÓN',
         r'A\s*OTROS\s*ENDOSO\s*DE\s*CONTINUIDAD\s*DE\s*NEGOCIO\s*POR\s*CANCELACIÓN\s*ANTICIPADA',
-        r'MODIFICACIONES\s*A\s*GASTOS\s*CUBIERTOS\s*HONORARIOS\s*POR\s*CONSULTAS\s*MÉDICAS',  # Mantenido solo una vez
+        r'MODIFICACIONES\s*A\s*GASTOS\s*CUBIERTOS\s*HONORARIOS\s*POR\s*CONSULTAS\s*MÉDICAS',
         r'MODIFICACIONES\s*A\s*GASTOS\s*CUBIERTOS\s*PADECIMIENTOS\s*PREEXISTENTES\s*CON\s*PERIODO\s*DE\s*ESPERA',
         r'MODIFICACIONES\s*A\s*OTROS\s*ESTRABISMO',
         r'A\s*EXCLUSIONES\s*DEPORTES\s*PELIGROSOS',
@@ -91,8 +93,8 @@ def extract_and_clean_text(pdf_path):
         r'A\s*EXCLUSIONES\s*ACUPUNTURISTAS',
         r'A\s*EXCLUSIONES\s*VITAMINAS\s*Y\s*COMPLEMENTOS\s*ALIMENTICIOS',
         r'MODIFICACIONES\s*A\s*GASTOS\s*CUBIERTOS',
-        r'HONORARIOS\s*POR\s*CONSULTAS\s*MÉDICAS',  # Mantenido solo una vez
-        r'HONORARIOS\s*POR\s*CONSULTAS\s*MEDICAS',  # Mantenido solo una vez
+        r'HONORARIOS\s*POR\s*CONSULTAS\s*MÉDICAS',
+        r'HONORARIOS\s*POR\s*CONSULTAS\s*MEDICAS',
         r'A\s*GASTOS',
         r'HONORARIOS',
         r'POR\s*CONSULTAS',
@@ -106,12 +108,12 @@ def extract_and_clean_text(pdf_path):
     # Eliminar patrones en mayúsculas
     for pattern in patterns_to_remove:
         raw_text = re.sub(pattern, '', raw_text)
-
+    
     # Eliminar texto en mayúsculas entre comillas
     raw_text = re.sub(r'"\s*[A-Z\s]+\s*"\s*', '', raw_text)
-    
+
     # Agrupar texto por código alfanumérico
-    code_pattern = r'\b[A-Z]{2}\.\d{3}\.'  # Patrón para encontrar el código alfanumérico
+    code_pattern = r'\b[A-Z]{2}\.\d{3}\.\d{3}\b'
     text_by_code = {}
     endoso_names = {}  # Diccionario para almacenar los nombres de los endosos
     paragraphs = raw_text.split('\n')
@@ -123,24 +125,22 @@ def extract_and_clean_text(pdf_path):
     for paragraph in paragraphs:
         code_match = re.search(code_pattern, paragraph)
         if code_match:
-            current_code = code_match.group(0)
-
+            current_code = code_match.group(0).strip()
+            
             # Extraer el nombre del endoso (todo lo que está en mayúsculas después del código)
-            name_match = re.search(r'\b[A-Z\s]+\b', paragraph)
-            endoso_name = None
+            name_match = re.search(rf'{current_code}\s*([A-Z\s]+)', paragraph)
             if name_match:
-                endoso_name = name_match.group(0).strip()
-                paragraph = paragraph.replace(endoso_name, '').strip()  # Eliminar el nombre del endoso del texto
+                endoso_name = name_match.group(1).strip()
+                endoso_names[current_code] = endoso_name
 
             # Eliminar el código del párrafo
             paragraph = re.sub(code_pattern, '', paragraph).strip()
 
             # Eliminar cualquier dígito que quede al inicio del párrafo
             paragraph = re.sub(r'^\d+\s*', '', paragraph).strip()
-
+            
             if current_code not in text_by_code:
                 text_by_code[current_code] = paragraph
-                endoso_names[current_code] = endoso_name
             else:
                 text_by_code[current_code] += " " + paragraph
 
