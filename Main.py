@@ -7,7 +7,8 @@ import re
 import difflib
 from PIL import Image
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarityimport streamlit as st
+from sklearn.metrics.pairwise import cosine_similarity 
+import streamlit as st
 from pdfminer.high_level import extract_text
 from fpdf import FPDF
 import pandas as pd
