@@ -13,7 +13,7 @@ from text_processing import extract_and_clean_text
 from file_utils.file_creators import create_excel, create_csv, create_txt
 from file_utils.image_utils import mostrar_imagen
 from gpt_config.openai_setup import initialize_openai
-from file_utils.text_processing.text_processing import preprocess_text, calculate_semantic_similarity, extract_and_align_numbers_with_context, calculate_numbers_similarity
+from file_utils.nombre_codigo_utils import extraer_nombres_verificacion # <-- Importar la función 
 
 # Inicializar las configuraciones de OpenAI
 client = initialize_openai()
@@ -47,6 +47,7 @@ if uploaded_file_1:
 if uploaded_file_2:
     archivo_subido_2 = True
     text_by_code_2, unique_code_count_2, _ = extract_and_clean_text(uploaded_file_2)
+    nombres_codigos = extraer_nombres_verificacion(text_by_code_2) # <-- Llamar a la función 
 
 # Botón para reiniciar la aplicación
 if st.sidebar.button("Reiniciar"):
