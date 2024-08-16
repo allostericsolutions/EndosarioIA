@@ -8,15 +8,12 @@ import difflib
 from PIL import Image
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-import streamlit as st
 from openpyxl.utils.exceptions import IllegalCharacterError
-# Importación corregida:
-from .text_processing.text_processing import extract_and_clean_text, calculate_semantic_similarity, extract_and_align_numbers_with_context, calculate_numbers_similarity 
+from text_processing import extract_and_clean_text
 from file_utils.file_creators import create_excel, create_csv, create_txt
 from file_utils.image_utils import mostrar_imagen
 from gpt_config.openai_setup import initialize_openai
-from file_utils.nombre_codigo_utils import extraer_nombres_verificacion
-
+from file_utils.text_processing.text_processing import preprocess_text, calculate_semantic_similarity, extract_and_align_numbers_with_context, calculate_numbers_similarity
 
 # Inicializar las configuraciones de OpenAI
 client = initialize_openai()
@@ -49,9 +46,6 @@ if uploaded_file_1:
     text_by_code_1, unique_code_count_1, codes_model = extract_and_clean_text(uploaded_file_1)
 if uploaded_file_2:
     archivo_subido_2 = True
-    # --->>> Primero extraer nombres <<<---
-    nombres_codigos = extraer_nombres_verificacion(uploaded_file_2.read().decode("utf-8"))
-    # Luego procesar el texto con la función existente
     text_by_code_2, unique_code_count_2, _ = extract_and_clean_text(uploaded_file_2)
 
 # Botón para reiniciar la aplicación
@@ -102,13 +96,9 @@ if archivo_subido_1 and archivo_subido_2:
             doc2_num_display = f'<details><summary>{doc2_num}</summary><p>{doc2_context}</p></details>'
             num_similarity_percentage = calculate_numbers_similarity(doc1_num, doc2_num)
 
-        # Obtener el nombre del diccionario
-        nombre = nombres_codigos.get(code, "")
-
         # Agregar los datos a la tabla comparativa
         row = {
             "Código": f'<b><span style="color:red;">{code}</span></b>',
-            "Nombre": nombre,  # Agregar la nueva columna
             "Documento Modelo": doc1_text_display if doc1_text != "Ausente" else f'<b style="color:red;">Ausente</b>',
             "Valores numéricos Modelo": f'<details><summary>Contexto</summary>{doc1_num_display}</details>',
             "Documento Verificación": doc2_text_display if doc2_text != "Ausente" else f'<b style="color:red;">Ausente</b>',
