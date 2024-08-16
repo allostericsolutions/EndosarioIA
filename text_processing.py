@@ -151,17 +151,3 @@ def extract_and_clean_text(pdf_path):
             text_by_code[current_code] += " " + paragraph
 
     return text_by_code, len(code_counts), list(code_counts)
-```
-
-### Cambios Realizados
-
-1. **Eliminación del Código Alfanumérico del Párrafo**:
-   - Cambié la línea que reemplazaba el código alfanumérico por sí mismo para que ahora elimine el código del párrafo:
-     ```python
-     paragraph = re.sub(code_pattern, '', paragraph).strip()
-     ```
-
-2. **Eliminación de Caracteres Adyacentes**:
-   - Mantuvimos la línea que elimina los caracteres adyacentes específicos después del código (esto sigue siendo opcional y depende de los requerimientos de tu procesamiento):
-     ```python
-     paragraph = re.sub(r'(?<=\b[A-Z]{2}\.\d{3}\.)\s*[A-Za-z0-9]{3}\s*', '', paragraph).strip()
