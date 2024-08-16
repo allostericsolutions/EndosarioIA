@@ -19,14 +19,14 @@ from file_utils.text_processing.text_processing import preprocess_text, calculat
 client = initialize_openai()
 
 # Configurar los parámetros de la página, incluyendo el nuevo icono
-st.set_page_config(page_title="Endosario Móvil AI 2.0", page_icon="ícono robot.png")
+st.set_page_config(page_title="Endosario Móvil AI 2.1", page_icon="ícono robot.png")
 
 # Título de la aplicación en la página principal
-st.title("Endosario Móvil AI 2.0")
+st.title("Endosario Móvil AI 2.1")
 
 # Mostrar la imagen y el título en la barra lateral
 with st.sidebar.expander("Información", expanded=True):
-    st.markdown("### Endosario Móvil AI 2.0")
+    st.markdown("### Endosario Móvil AI 2.1")
     image_path = 'Allosteric_Solutions.png'
     caption = 'Interesse'
     width = 300
