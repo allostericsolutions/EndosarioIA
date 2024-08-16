@@ -99,9 +99,9 @@ if archivo_subido_1 and archivo_subido_2:
         # Agregar los datos a la tabla comparativa
         row = {
             "Código": f'<b><span style="color:red;">{code}</span></b>',
-            "Documento PEI": doc1_text_display if doc1_text != "Ausente" else f'<b style="color:red;">Ausente</b>',
+            "Documento PEI": f'<span style="font-size:16px; font-weight:bold;">{doc1_text_display if doc1_text != "Ausente" else f"<b style=\'color:red;\'>Ausente</b>"}</span>',
             "Valores numéricos PEI": f'<details><summary>Contexto</summary>{doc1_num_display}</details>',
-            "Documento Metlife": doc2_text_display if doc2_text != "Ausente" else f'<b style="color:red;">Ausente</b>',
+            "Documento Metlife": f'<span style="font-size:16px; font-weight:bold;">{doc2_text_display if doc2_text != "Ausente" else f"<b style=\'color:red;\'>Ausente</b>"}</span>',
             "Valores numéricos Metlife": f'<details><summary>Contexto</summary>{doc2_num_display}</details>',
             "Similitud Texto": similarity_str,
             "Similitud Numérica": f'{num_similarity_percentage:.2f}%'
