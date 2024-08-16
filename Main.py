@@ -10,7 +10,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity # <-- Corrección: Separación de importaciones
 import streamlit as st
 from openpyxl.utils.exceptions import IllegalCharacterError
-from text_processing import extract_and_clean_text, calculate_semantic_similarity, extract_and_align_numbers_with_context, calculate_numbers_similarity
+from text_processing.text_processing import extract_and_clean_text, calculate_semantic_similarity, extract_and_align_numbers_with_context, calculate_numbers_similarity
 from file_utils.file_creators import create_excel, create_csv, create_txt
 from file_utils.image_utils import mostrar_imagen
 from gpt_config.openai_setup import initialize_openai
