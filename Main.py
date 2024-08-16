@@ -15,7 +15,7 @@ from file_utils.image_utils import mostrar_imagen
 from gpt_config.openai_setup import initialize_openai
 from file_utils.text_processing.text_processing import preprocess_text, calculate_semantic_similarity, extract_and_align_numbers_with_context, calculate_numbers_similarity
 
-# Inicializar las configuraciones de OpenAI
+# Inicializar las configuraciones de OpenAI AllostericSolutions
 client = initialize_openai()
 
 # Configurar los parámetros de la página, incluyendo el nuevo icono
