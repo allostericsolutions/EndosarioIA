@@ -18,7 +18,7 @@ def calculate_semantic_similarity(text1, text2):
     cosine_sim = cosine_similarity(vectors)
     return cosine_sim[0, 1] * 100
 
-def extract_and_align_numbers_with_context(text1, text2, context_size=30):
+def extract_and_align_numbers_with_context(text1, text2, context_size=30, max_numbers=20):
     def extract_numbers_with_context(text):
         matches = re.finditer(r'\b\d+\b', text)
         numbers_with_context = []
@@ -32,13 +32,18 @@ def extract_and_align_numbers_with_context(text1, text2, context_size=30):
     nums1_with_context = extract_numbers_with_context(text1)
     nums2_with_context = extract_numbers_with_context(text2)
 
+    # Alinear los números y los contextos
     nums1 = [num for num, context in nums1_with_context] + [''] * max(0, len(nums2_with_context) - len(nums1_with_context))
     nums2 = [num for num, context in nums2_with_context] + [''] * max(0, len(nums1_with_context) - len(nums2_with_context))
 
     context1 = [context for num, context in nums1_with_context] + [''] * max(0, len(nums2_with_context) - len(nums1_with_context))
     context2 = [context for num, context in nums2_with_context] + [''] * max(0, len(nums1_with_context) - len(nums2_with_context))
 
-    return ' '.join(nums1) if nums1 else 'N/A', ' '.join(context1) if context1 else 'N/A', ' '.join(nums2) if nums2 else 'N/A', ' '.join(context2) if context2 else 'N/A'
+    # Truncar los números a los primeros max_numbers elementos
+    nums1_truncated = nums1[:max_numbers]
+    nums2_truncated = nums2[:max_numbers]
+
+    return ' '.join(nums1_truncated) if nums1_truncated else 'N/A', ' '.join(context1) if context1 else 'N/A', ' '.join(nums2_truncated) if nums2_truncated else 'N/A', ' '.join(context2) if context2 else 'N/A'
 
 def calculate_numbers_similarity(nums1, nums2):
     nums1_list = nums1.split()
