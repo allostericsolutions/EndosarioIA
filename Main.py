@@ -33,8 +33,8 @@ with st.sidebar.expander("Información", expanded=True):
     mostrar_imagen(image_path, caption, width)
 
 # Subir los dos archivos PDF
-uploaded_file_1 = st.file_uploader("PEI", type=["pdf"], key="uploader1")
-uploaded_file_2 = st.file_uploader("Metlife", type=["pdf"], key="uploader2")
+uploaded_file_1 = st.file_uploader("Modelo", type=["pdf"], key="uploader1")
+uploaded_file_2 = st.file_uploader("Verificación", type=["pdf"], key="uploader2")
 
 # Variables para manejar el estado de los archivos subidos
 archivo_subido_1 = False
@@ -43,11 +43,10 @@ archivo_subido_2 = False
 # Verificar si los archivos han sido subidos y extraer el texto
 if uploaded_file_1:
     archivo_subido_1 = True
-    text_by_code_1, unique_code_count_1, codes_model, _ = extract_and_clean_text(uploaded_file_1)
-
+    text_by_code_1, unique_code_count_1, codes_model = extract_and_clean_text(uploaded_file_1)
 if uploaded_file_2:
     archivo_subido_2 = True
-    text_by_code_2, unique_code_count_2, _, endoso_names_metlife = extract_and_clean_text(uploaded_file_2)
+    text_by_code_2, unique_code_count_2, _ = extract_and_clean_text(uploaded_file_2)
 
 # Botón para reiniciar la aplicación
 if st.sidebar.button("Reiniciar"):
@@ -59,6 +58,7 @@ if st.sidebar.button("Reiniciar"):
 
 # Mostrar la sección de comparación de archivos solo si se han subido ambos archivos
 if archivo_subido_1 and archivo_subido_2:
+    
     # Obtener todos los códigos únicos presentes en ambos documentos
     all_codes = set(text_by_code_1.keys()).union(set(text_by_code_2.keys()))
 
@@ -77,9 +77,6 @@ if archivo_subido_1 and archivo_subido_2:
         doc2_text = text_by_code_2.get(code, "Ausente")
         doc2_text_display = handle_long_text(doc2_text)
 
-        # Obtener el nombre del endoso para Metlife
-        endoso_metlife = endoso_names_metlife.get(code, "N/A")
-        
         # Si un texto no está presente, el porcentaje de similitud textual es 0
         if doc1_text == "Ausente" or doc2_text == "Ausente":
             sim_percentage = 0
@@ -99,13 +96,13 @@ if archivo_subido_1 and archivo_subido_2:
             doc2_num_display = f'<details><summary>{doc2_num}</summary><p>{doc2_context}</p></details>'
             num_similarity_percentage = calculate_numbers_similarity(doc1_num, doc2_num)
 
+        # Agregar los datos a la tabla comparativa
         row = {
             "Código": f'<b><span style="color:red;">{code}</span></b>',
-            "Nombre del Endoso (Metlife)": endoso_metlife,
-            "Documento PEI": doc1_text_display if doc1_text != "Ausente" else f'<b style="color:red;">Ausente</b>',
-            "Valores numéricos PEI": f'<details><summary>Contexto</summary>{doc1_num_display}</details>',
-            "Documento Metlife": doc2_text_display if doc2_text != "Ausente" else f'<b style="color:red;">Ausente</b>',
-            "Valores numéricos Metlife": f'<details><summary>Contexto</summary>{doc2_num_display}</details>',
+            "Documento Modelo": doc1_text_display if doc1_text != "Ausente" else f'<b style="color:red;">Ausente</b>',
+            "Valores numéricos Modelo": f'<details><summary>Contexto</summary>{doc1_num_display}</details>',
+            "Documento Verificación": doc2_text_display if doc2_text != "Ausente" else f'<b style="color:red;">Ausente</b>',
+            "Valores numéricos Verificación": f'<details><summary>Contexto</summary>{doc2_num_display}</details>',
             "Similitud Texto": similarity_str,
             "Similitud Numérica": f'{num_similarity_percentage:.2f}%'
         }
@@ -130,14 +127,14 @@ if archivo_subido_1 and archivo_subido_2:
             '<td>',
             '<td class="fixed-width" style="border:1px solid black; padding:10px; text-align:left; vertical-align:top;">'
         )
-        # Aplica estilos a "Documento PEI" y "Documento Metlife"
+        # Aplica estilos a "Documento Modelo" y "Documento Verificación"
         html = html.replace(
-            '<th>Documento PEI</th>',
-            '<th style="font-size: 20px; font-weight: bold;">Documento PEI</th>'
+            '<th>Documento Modelo</th>',
+            '<th style="font-size: 20px; font-weight: bold;">Documento Modelo</th>'
         )
         html = html.replace(
-            '<th>Documento Metlife</th>',
-            '<th style="font-size: 20px; font-weight: bold;">Documento Metlife</th>'
+            '<th>Documento Verificación</th>',
+            '<th style="font-size: 20px; font-weight: bold;">Documento Verificación</th>'
         )
         # Agrega estilos CSS para las celdas de similitud numérica
         df["Similitud Numérica"] = df["Similitud Numérica"].str.rstrip('%').astype(float)
@@ -156,8 +153,8 @@ if archivo_subido_1 and archivo_subido_2:
 
     # Mostrar el conteo de códigos únicos en cada documento
     st.markdown("### Conteo de Códigos")
-    st.write(f"**Documento PEI:** {unique_code_count_1} (Faltan: {', '.join(list(all_codes - set(codes_model)))})")
-    st.write(f"**Documento Metlife:** {unique_code_count_2} (Faltan: {', '.join(list(all_codes - set(text_by_code_2.keys())))})")
+    st.write(f"**Documento Modelo:** {unique_code_count_1} (Faltan: {', '.join(list(all_codes - set(codes_model)))})")
+    st.write(f"**Documento Verificación:** {unique_code_count_2} (Faltan: {', '.join(list(all_codes - set(text_by_code_2.keys())))})")
 
     # Botones para descargar los archivos de comparación en diferentes formatos
     col1, col2, col3 = st.columns(3)
@@ -236,8 +233,8 @@ if archivo_subido_1 and archivo_subido_2:
         texto_modelo = text_by_code_1.get(selected_code, "Ausente")
         texto_verificacion = text_by_code_2.get(selected_code, "Ausente")
         with st.expander("Mostrar Textos Filtrados"):
-            st.markdown(f"**Documento PEI:** {texto_modelo}")
-            st.markdown(f"**Documento Metlife:** {texto_verificacion}")
+            st.markdown(f"**Documento Modelo:** {texto_modelo}")
+            st.markdown(f"**Documento Verificación:** {texto_verificacion}")
 
         # Incluir el código en los textos antes de enviarlos para análisis
         texto_modelo_con_codigo = f"Código: {selected_code}\n\n{texto_modelo}"
@@ -291,3 +288,5 @@ if archivo_subido_1 and archivo_subido_2:
             # Mostrar la respuesta en la ventana de chat
             with st.chat_message("assistant"):
                 st.write(response.choices[0].message.content)
+
+
