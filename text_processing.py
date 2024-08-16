@@ -18,10 +18,10 @@ def extract_and_clean_text(pdf_path):
 
     patterns_to_remove = [
         r'HOJA\s*:\s*\d+',
-        r'G\.M\.M\. GRUPO PROPIA MEDICALIFE',
+        r'G\.M\.M\. GRUPO PROPIA MEDICALIFE', 
         r'02001\/M\d+',
-        r'CONTRATANTE:\s*GBM\s*GRUPO\s*BURSATIL\s*MEXICANO,\s*S\.A\. DE C\.V\. CASA DE BOLSA',
-        r'GO\-2\-021',
+        r'CONTRATANTE:\s*GBM\s*GRUPO\s*BURSATIL\s*MEXICANO,\s*S\.A\. DE C\.V\. CASA DE BOLSA', 
+        r'GO\-2\-021', 
         r'\bCONDICION\s*:\s*',
         r'MODIFICACIONES\s*A\s*DEFINICIONES\s*PERIODO\s*DE\s*GRACIA',
         r'MODIFICACIONES\s*A\s*DEFINICIONES',  # Mantenido solo una vez
@@ -135,8 +135,8 @@ def extract_and_clean_text(pdf_path):
         code_match = re.search(code_pattern, paragraph)
         if code_match:
             current_code = code_match.group(0)
-            # Reemplazar partes
-            paragraph = re.sub(code_pattern, current_code, paragraph).strip()
+            # Aquí se elimina el código del párrafo
+            paragraph = re.sub(code_pattern, '', paragraph).strip()
 
             # Aquí eliminamos los tres caracteres que siguen al código
             paragraph = re.sub(r'(?<=\b[A-Z]{2}\.\d{3}\.)\s*[A-Za-z0-9]{3}\s*', '', paragraph).strip()
@@ -151,5 +151,17 @@ def extract_and_clean_text(pdf_path):
             text_by_code[current_code] += " " + paragraph
 
     return text_by_code, len(code_counts), list(code_counts)
+```
 
+### Cambios Realizados
 
+1. **Eliminación del Código Alfanumérico del Párrafo**:
+   - Cambié la línea que reemplazaba el código alfanumérico por sí mismo para que ahora elimine el código del párrafo:
+     ```python
+     paragraph = re.sub(code_pattern, '', paragraph).strip()
+     ```
+
+2. **Eliminación de Caracteres Adyacentes**:
+   - Mantuvimos la línea que elimina los caracteres adyacentes específicos después del código (esto sigue siendo opcional y depende de los requerimientos de tu procesamiento):
+     ```python
+     paragraph = re.sub(r'(?<=\b[A-Z]{2}\.\d{3}\.)\s*[A-Za-z0-9]{3}\s*', '', paragraph).strip()
