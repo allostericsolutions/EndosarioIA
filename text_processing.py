@@ -138,8 +138,8 @@ def extract_and_clean_text(pdf_path):
             # Aquí se elimina el código del párrafo
             paragraph = re.sub(code_pattern, '', paragraph).strip()
 
-            # Aquí eliminamos los tres caracteres que siguen al código
-            paragraph = re.sub(r'(?<=\b[A-Z]{2}\.\d{3}\.)\s*[A-Za-z0-9]{3}\s*', '', paragraph).strip()
+            # Aquí eliminamos cualquier dígito que quede al inicio del párrafo
+            paragraph = re.sub(r'^\d+\s*', '', paragraph).strip()
 
             if current_code not in text_by_code:
                 text_by_code[current_code] = paragraph
