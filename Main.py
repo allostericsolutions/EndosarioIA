@@ -115,13 +115,17 @@ if archivo_subido_1 and archivo_subido_2:
 
     # Extraer nombres de endoso del texto del documento Metlife
     raw_text_metlife = extract_text(uploaded_file_2)
-    endoso_names_metlife = extract_endoso_names(raw_text_metlife)
+    print("Texto extraído del documento Metlife:")
+    print(raw_text_metlife)  # Verifica el texto extraído
 
-    # Eliminar etiquetas HTML de la columna "Código"
-    comparison_df['Código'] = comparison_df['Código'].str.replace(r'<[^>]*>', '', regex=True)
+    endoso_names_metlife = extract_endoso_names(raw_text_metlife)
+    print("Nombres de Endoso extraídos del documento Metlife:")
+    print(endoso_names_metlife)  # Verifica los códigos y nombres extraídos
 
     # Añadir la columna de 'Nombre del Endoso' al DataFrame existente
     comparison_df['Nombre del Endoso Metlife'] = comparison_df['Código'].map(endoso_names_metlife)
+    print("DataFrame después de añadir la columna 'Nombre del Endoso Metlife':")
+    print(comparison_df)  # Verifica el DataFrame actualizado
 
     # Generar HTML para la tabla con estilización CSS
     def generate_html_table(df):
