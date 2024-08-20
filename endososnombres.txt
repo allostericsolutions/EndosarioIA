@@ -30,7 +30,7 @@ GC.063	Cobertura de enfermedad crónica
 GC.064	Cobertura de enfermedad crónica
 GC.065	Cobertura de enfermedad crónica
 GO.002	Razón social del contratante
-MC.016	Modificaciones a clausulas generales movimientos de asegurados autoadministrada (inicio vs renovación)
+MC.016.	Modificaciones a clausulas generales movimientos de asegurados autoadministrada (inicio vs renovación)
 MC.021	Pago de complementos anteriores
 MD.001	Accidente
 MD.007	Razón social del contratante
