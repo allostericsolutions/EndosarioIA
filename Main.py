@@ -117,6 +117,9 @@ if archivo_subido_1 and archivo_subido_2:
     raw_text_metlife = extract_text(uploaded_file_2)
     endoso_names_metlife = extract_endoso_names(raw_text_metlife)
 
+    # Eliminar etiquetas HTML de la columna "Código"
+    comparison_df['Código'] = comparison_df['Código'].str.replace(r'<[^>]*>', '', regex=True)
+
     # Añadir la columna de 'Nombre del Endoso' al DataFrame existente
     comparison_df['Nombre del Endoso Metlife'] = comparison_df['Código'].map(endoso_names_metlife)
 
