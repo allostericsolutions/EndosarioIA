@@ -300,7 +300,6 @@ ME.023. Acupunturistas
 ME.038. Vitaminas y complementos alimenticios
 MG.006. Honorarios por consultas médicas
 MG.007. Honorarios médicos y/o quirúrgicos
-MG.008. Protectores Gástricos
 MG.011. Cobertura adicional de ambulancia aérea
 MG.013. Quiroprácticos
 MG.014. Homeópatas
