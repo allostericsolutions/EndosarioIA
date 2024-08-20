@@ -30,14 +30,14 @@ GC.063	Cobertura de enfermedad crónica
 GC.064	Cobertura de enfermedad crónica
 GC.065	Cobertura de enfermedad crónica
 GO.002	Razón social del contratante
-MC.016.	Modificaciones a clausulas generales movimientos de asegurados autoadministrada (inicio vs renovación)
-MC.021	Pago de complementos anteriores
-MD.001	Accidente
-MD.007	Razón social del contratante
-MD.018	Exclusión prestadores de servicios médicos no reconocidos, fuera de convenio
-MD.019	Exclusiones de prestadores de servicios médicos no reconocidos
-MD.029	Periodo de gracia
-ME.007	Alcoholismo y/o toxicomanía
+MC.016.	Movimientos de asegurados autoadministrada (inicio vs renovación)
+MC.021.	Pago de complementos anteriores
+MD.001.	Accidente
+MD.007.	Razón social del contratante
+MD.018.	Exclusión prestadores de servicios médicos no reconocidos, fuera de convenio
+MD.019.	Exclusiones de prestadores de servicios médicos no reconocidos
+MD.029.	Periodo de gracia
+ME.007.	Alcoholismo y/o toxicomanía
 ME.011	Menopausia
 ME.015	Asalto
 ME.018	Deportes peligrosos
@@ -141,24 +141,24 @@ MG.032	Circuncisión
 MG.033	Cobertura de daño psiquiátrico
 MG.034	Padecimientos preexistentes con periodo de espera
 MG.046	Hospitalización de neonatos
-MG.057	Estrabismo
-MO.001	Cláusula de emergencia en el extranjero
-MT.003	Litotripsias
-MT.005	Franja fronteriza
-MT.008	Hallux valgus o juanetes
-MT.010	Amigdalas y adenoides
-MT.014	Clínica de la columna
-MT.017	Lesiones pigmentarias y lunares
-MT.023	Acné
-MT.052	Conversión a individual
-MT.055	Padecimientos con periodo de espera
-MT.057	Estrabismo
-MT.064	Registro de condiciones generales
-OT.001	Endoso de continuidad de negocio por cancelación anticipada
-PA.002	Aplicación de deducible y coaseguro
-PC.021	Pago de complementos anteriores
-PE.004	Legrado por aborto
-PE.027	Recién nacido sano
+MG.057.	Estrabismo
+MO.001.	Cláusula de emergencia en el extranjero
+MT.003.	Litotripsias
+MT.005.	Franja fronteriza
+MT.008.	Hallux valgus o juanetes
+MT.010.	Amigdalas y adenoides
+MT.014.	Clínica de la columna
+MT.017.	Lesiones pigmentarias y lunares
+MT.023.	Acné
+MT.052.	Conversión a individual
+MT.055.	Padecimientos con periodo de espera
+MT.057.	Estrabismo
+MT.064.	Registro de condiciones generales
+OT.001.	Endoso de continuidad de negocio por cancelación anticipada
+PA.002.	Aplicación de deducible y coaseguro
+PC.021.	Pago de complementos anteriores
+PE.004.	Legrado por aborto
+PE.027.	Recién nacido sano
 PG.007	Honorarios por consulta y procedimientos quirúrgicos
 PG.019	(Códigos adicionales sin ticket en el texto)
 PG.024	(Códigos adicionales sin ticket en el texto)
