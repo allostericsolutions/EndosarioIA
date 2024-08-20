@@ -113,6 +113,13 @@ if archivo_subido_1 and archivo_subido_2:
     # Convertir la lista a DataFrame
     comparison_df = pd.DataFrame(comparison_data)
 
+    # Extraer nombres de endoso del texto del documento PEI
+    raw_text_pei = extract_text(uploaded_file_1)
+    endoso_names_pei = extract_endoso_names(raw_text_pei)
+
+    # Añadir la columna de 'Nombre del Endoso' al DataFrame existente
+    comparison_df['Nombre del Endoso PEI'] = comparison_df['Código'].map(endoso_names_pei)
+
     # Generar HTML para la tabla con estilización CSS
     def generate_html_table(df):
         html = df.to_html(index=False, escape=False, render_links=True)
