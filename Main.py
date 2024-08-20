@@ -50,34 +50,16 @@ if uploaded_file_2:
     archivo_subido_2 = True
     text_by_code_2, unique_code_count_2, _ = extract_and_clean_text(uploaded_file_2)
 
-# Botón para reiniciar la aplicación
-if st.sidebar.button("Reiniciar"):
-    archivo_subido_1 = False
-    archivo_subido_2 = False
-    st.session_state.chat_history = []
-    st.session_state.analysis_loaded = False
-    st.session_state.saludo_enviado = False  # Reiniciar el estado del saludo
-
 # Mostrar la sección de comparación de archivos solo si se han subido ambos archivos
 if archivo_subido_1 and archivo_subido_2:
-    
     # Obtener todos los códigos únicos presentes en ambos documentos
     all_codes = set(text_by_code_1.keys()).union(set(text_by_code_2.keys()))
-
-    # Función para manejar texto largo en el campo del endoso
-    def handle_long_text(text, length=70):
-        if len(text) > length:
-            return f'<details><summary>Endoso</summary>{text}</details>'
-        else:
-            return text
 
     # Crear la tabla comparativa
     comparison_data = []
     for code in all_codes:
         doc1_text = text_by_code_1.get(code, "Ausente")
-        doc1_text_display = handle_long_text(doc1_text)
         doc2_text = text_by_code_2.get(code, "Ausente")
-        doc2_text_display = handle_long_text(doc2_text)
 
         # Si un texto no está presente, el porcentaje de similitud textual es 0
         if doc1_text == "Ausente" or doc2_text == "Ausente":
@@ -101,9 +83,9 @@ if archivo_subido_1 and archivo_subido_2:
         # Agregar los datos a la tabla comparativa
         row = {
             "Código": f'<b><span style="color:red;">{code}</span></b>',
-            "Documento PEI": f'<span style="font-size:16px; font-weight:bold;">{doc1_text_display if doc1_text != "Ausente" else f"<b style=\'color:red;\'>Ausente</b>"}</span>',
+            "Documento PEI": f'<span style="font-size:16px; font-weight:bold;">{doc1_text if doc1_text != "Ausente" else f"<b style=\'color:red;\'>Ausente</b>"}</span>',
             "Valores numéricos PEI": f'<details><summary>Contexto</summary>{doc1_num_display}</details>',
-            "Documento Metlife": f'<span style="font-size:16px; font-weight:bold;">{doc2_text_display if doc2_text != "Ausente" else f"<b style=\'color:red;\'>Ausente</b>"}</span>',
+            "Documento Metlife": f'<span style="font-size:16px; font-weight:bold;">{doc2_text if doc2_text != "Ausente" else f"<b style=\'color:red;\'>Ausente</b>"}</span>',
             "Valores numéricos Metlife": f'<details><summary>Contexto</summary>{doc2_num_display}</details>',
             "Similitud Texto": similarity_str,
             "Similitud Numérica": f'{num_similarity_percentage:.2f}%'
@@ -113,12 +95,12 @@ if archivo_subido_1 and archivo_subido_2:
     # Convertir la lista a DataFrame
     comparison_df = pd.DataFrame(comparison_data)
 
-    # Extraer nombres de endoso del texto del documento PEI
-    raw_text_pei = extract_text(uploaded_file_1)
-    endoso_names_pei = extract_endoso_names(raw_text_pei)
+    # Extraer nombres de endoso del texto del documento Metlife
+    raw_text_metlife = extract_text(uploaded_file_2)
+    endoso_names_metlife = extract_endoso_names(raw_text_metlife)
 
     # Añadir la columna de 'Nombre del Endoso' al DataFrame existente
-    comparison_df['Nombre del Endoso PEI'] = comparison_df['Código'].map(endoso_names_pei)
+    comparison_df['Nombre del Endoso Metlife'] = comparison_df['Código'].map(endoso_names_metlife)
 
     # Generar HTML para la tabla con estilización CSS
     def generate_html_table(df):
