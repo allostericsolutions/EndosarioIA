@@ -1,4 +1,5 @@
-import streamlit as st
+import streamlit as st  # Importa streamlit al principio del archivo
+
 from pdfminer.high_level import extract_text
 from fpdf import FPDF
 import pandas as pd
