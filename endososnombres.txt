@@ -57,7 +57,7 @@ MG.014.  Homeópatas
 MG.020.  Recién nacido prematuro
 MG.022.  Complicaciones del embarazo, parto y puerperio
 MG.024.  Hernias
-MG.026.  (Códigos adicionales sin ticket en el texto)
+MG.026.  (Prótesis dentales/Maxilofaciales)
 MG.029.  Trasplante de órganos
 MG.032.  Circuncisión
 MG.033.  Cobertura de daño psiquiátrico
@@ -141,7 +141,6 @@ MG.013.	 Quiroprácticos
 MG.014.	 Homeópatas
 MG.020.	 Recién nacido prematuro
 MG.022.	 Complicaciones del embarazo, parto y puerperio
-MG.026.	(Códigos adicionales sin ticket en el texto)
 MG.029.	 Trasplante de órganos
 MG.032.	 Circuncisión
 MG.033.	 Cobertura de daño psiquiátrico
@@ -221,7 +220,6 @@ MG.014.	 Homeópatas
 MG.020.	 Recién nacido prematuro
 MG.022.	 Complicaciones del embarazo, parto y puerperio
 MG.024.	 Hernias
-MG.026.	 (Códigos adicionales sin ticket en el texto)
 MG.029.	 Trasplante de órganos
 MG.032.	 Circuncisión
 MG.033.	 Cobertura de daño psiquiátrico
