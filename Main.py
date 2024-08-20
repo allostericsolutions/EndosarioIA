@@ -57,7 +57,7 @@ if st.sidebar.button("Reiniciar"):
     st.session_state.saludo_enviado = False  # Reiniciar el estado del saludo
 
 # Leer el archivo CSV con los nombres de los endosos
-endosos_df = pd.read_csv('endosos.csv')
+endosos_df = pd.read_csv('endosos.csv', encoding='utf-8')
 endosos_dict = dict(zip(endosos_df['codigo'], endosos_df['nombre']))
 
 # Mostrar la sección de comparación de archivos solo si se han subido ambos archivos
