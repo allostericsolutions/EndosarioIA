@@ -303,7 +303,9 @@ with st.sidebar:
       "<font size='1'><i>(Don Quijote de la Mancha, Parte II)</i></font>",
       unsafe_allow_html=True,
     )
-    st.markdown("***")import streamlit as st
+    import streamlit as st
+
+st.markdown("***")
 from pdfminer.high_level import extract_text
 from fpdf import FPDF
 import pandas as pd
