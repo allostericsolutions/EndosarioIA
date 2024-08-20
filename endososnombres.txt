@@ -161,7 +161,6 @@ MT.064.	Registro de condiciones generales
 OT.001.	Endoso de continuidad de negocio por cancelación anticipada
 PA.002.	Aplicación de deducible y coaseguro
 PE.004.	Legrado por aborto
-PG.021. Maternidad
 PE.027.	Recién nacido sano
 PG.007.	Honorarios por consulta y procedimientos quirúrgicos
 PG.019.	(Códigos adicionales sin ticket en el texto)
