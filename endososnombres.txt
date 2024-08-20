@@ -1,4 +1,92 @@
-GC.021.	Maternidad
+GC.021.  Maternidad
+GC.022.  Aviación particular
+GC.024.  Hernias
+GC.025.  Cirugía de nariz y senos paranasales
+GC.029.  Trasplante de órganos
+GC.032.  Circuncisión
+GC.033.  Cobertura de daño psiquiátrico
+GC.034.  Padecimientos preexistentes con periodo de espera
+GC.035.  Prótesis
+GC.036.  Tumores malignos
+GC.037.  Diabetes
+GC.038.  Prótesis
+GC.039.  Cirugía plástica reconstructiva
+GC.040.  Cirugía de columna
+GC.041.  Cirugía de la vista
+GC.042.  Cirugía de la mano
+GC.044.  Cirugía de la rodilla
+GC.045.  Cirugía de la cadera
+GC.046.  Cirugía de la muñeca
+GC.047.  Cirugía de la mano
+GC.048.  Cirugía de la columna
+GC.049.  Cirugía de la rodilla
+GC.051.  Cirugía de la cadera
+GC.052.  Cirugía de la muñeca
+GC.054.  Enfermedades preexistentes
+GC.055.  Padecimientos con periodo de espera
+GC.056.  Enfermedades preexistentes
+GC.058.  Enfermedades preexistentes
+GC.059.  Enfermedades preexistentes
+GC.062.  Cobertura de enfermedad crónica
+GC.063.  Cobertura de enfermedad crónica
+GC.064.  Cobertura de enfermedad crónica
+GC.065.  Cobertura de enfermedad crónica
+GO.002.  Razón social del contratante
+MA.001.  Modificación de Monto de Deducible y Coaseguro
+MC.016.  Movimientos de asegurados autoadministrada (inicio vs renovación)
+MC.021.  Pago de complementos anteriores
+MD.001.  Accidente
+MD.007.  Razón social del contratante
+MD.018.  Exclusión prestadores de servicios médicos no reconocidos, fuera de convenio
+MD.019.  Exclusiones de prestadores de servicios médicos no reconocidos
+MD.029.  Periodo de gracia
+ME.007.  Alcoholismo y/o toxicomanía
+ME.011.  Menopausia
+ME.015.  Asalto
+ME.018.  Deportes peligrosos
+ME.020.  Ampliación cobertura de accidentes
+ME.022.  Aviación particular
+ME.023.  Acupunturistas
+ME.038.  Vitaminas y complementos alimenticios
+MG.006.  Honorarios por consultas médicas
+MG.007.  Honorarios médicos y/o quirúrgicos
+MG.008.  Medicamentos
+MG.011.  Cobertura adicional de ambulancia aérea
+MG.013.  Quiroprácticos
+MG.014.  Homeópatas
+MG.020.  Recién nacido prematuro
+MG.022.  Complicaciones del embarazo, parto y puerperio
+MG.024.  Hernias
+MG.026.  (Códigos adicionales sin ticket en el texto)
+MG.029.  Trasplante de órganos
+MG.032.  Circuncisión
+MG.033.  Cobertura de daño psiquiátrico
+MG.034.  Padecimientos preexistentes con periodo de espera
+MG.046.  Hospitalización de neonatos
+MG.057.  Estrabismo
+MO.001.  Cláusula de emergencia en el extranjero
+MT.003.  Litotripsias
+MT.005.  Franja fronteriza
+MT.008.  Hallux valgus o juanetes
+MT.010.  Amigdalas y adenoides
+MT.014.  Clínica de la columna
+MT.017.  Lesiones pigmentarias y lunares
+MT.023.  Acné
+MT.052.  Conversión a individual
+MT.055.  Padecimientos con periodo de espera
+MT.057.  Estrabismo
+MT.064.  Registro de condiciones generales
+OT.001.  Endoso de continuidad de negocio por cancelación anticipada
+PA.002.  Aplicación de deducible y coaseguro
+PC.021.  Pago de complementos anteriores
+PE.004.  Legrado por aborto
+PE.027.  Recién nacido sano
+PG.007.  Honorarios por consulta y procedimientos quirúrgicos
+PG.019.  (Códigos adicionales sin ticket en el texto)
+PG.021.  Maternidad
+PG.024.  (Códigos adicionales sin ticket en el texto)
+PG.025.  Cirugía de nariz y senos paranasales
+PO.005.  Corrección de la vistaGC.021.	Maternidad
 GC.022.	Aviación particular
 GC.024.	Hernias
 GC.025.	Cirugía de nariz y senos paranasales
