@@ -248,3 +248,4 @@ PE.027.	Recién nacido sano
 PG.007.	Honorarios por consulta y procedimientos quirúrgicos
 PG.025.	Cirugía de nariz y senos paranasales
 PO.005.	Corrección de la vista
+MC.005. Corrección de vista 
