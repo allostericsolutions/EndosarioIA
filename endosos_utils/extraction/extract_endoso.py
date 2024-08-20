@@ -1,10 +1,8 @@
-# endosos_utils/extraction/extract_endoso.py
-
 import re
 
-def extract_endoso_names(text):
+def extract_metlife_endoso_names(text):
     """
-    Extrae los nombres de endoso basados en un patrón específico de códigos alfanuméricos.
+    Extrae los nombres de endoso del documento Metlife basado en un patrón específico de códigos alfanuméricos.
     
     Args:
         text (str): Texto del cual extraer los nombres de endoso.
