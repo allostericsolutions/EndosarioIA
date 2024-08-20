@@ -1,5 +1,5 @@
 CG.004.  Cancelación Póliza
-GC.021.  Maternidad/Cesárea
+GC.021.  Parto/Cesárea
 GC.022.  Aviación particular
 GC.024.  Hernias
 GC.025.  Cirugía de nariz y senos paranasales
