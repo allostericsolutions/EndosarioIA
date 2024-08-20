@@ -1,4 +1,3 @@
-código  nombre de ensoso 
 GC.021.	Maternidad
 GC.022	Aviación particular
 GC.024	Hernias
