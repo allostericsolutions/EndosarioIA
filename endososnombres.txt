@@ -249,7 +249,6 @@ PG.025.	 Cirugía de nariz y senos paranasales
 PO.005.	 Corrección de la vista
 MO.005.  Corrección de vista 
 CG.004. Cancelación Póliza
-GC.021. Maternidad
 GC.022. Aviación particular
 GC.024. Hernias
 GC.025. Cirugía de nariz y senos paranasales
