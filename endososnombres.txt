@@ -76,6 +76,7 @@ MT.010.  Amigdalas y adenoides
 MT.014.  Clínica de la columna
 MT.017.  Lesiones pigmentarias y lunares
 MT.023.  Acné
+MT.028.  Continuación Familiar 
 MT.052.  Conversión a individual
 MT.055.  Padecimientos con periodo de espera
 MT.057.  Estrabismo
