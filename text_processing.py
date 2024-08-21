@@ -65,6 +65,7 @@ def extract_and_clean_text(pdf_path):
         r'ACCIDENTE',
         r'A\s*EXCLUSIONES\s*LEGRADO\s*POR\s*ABORTO',
         r'PADECIMIENTOS\s*CONGENITOS',
+        r'APLICACION\s*DE\s*DEDUCIBLE\s*Y\s*COASEGURO',
         r'A\s*EXCLUSIONES\s*AVIACION\s*PARTICULAR',
         r'A\s*EXCLUSIONES\s*ASALTO',
         r'A\s*GASTOS\s*CUBIERTOS\s*TRANSPLANTE\s*DE\s*ORGANOS',
