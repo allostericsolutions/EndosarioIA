@@ -94,7 +94,6 @@ GC.022.	 Aviación particular
 GC.024.	 Hernias
 GC.025.	 Cirugía de nariz y senos paranasales
 GC.029.	 Trasplante de órganos
-GC.032.	 Circuncisión
 GC.033.	 Cobertura de daño psiquiátrico
 GC.034.	 Padecimientos preexistentes con periodo de espera
 GC.035.	 Prótesis
@@ -255,7 +254,6 @@ GC.022. Aviación particular
 GC.024. Hernias
 GC.025. Cirugía de nariz y senos paranasales
 GC.029. Trasplante de órganos 
-GC.032. Circuncisión
 GC.033. Cobertura de daño psiquiátrico
 GC.034. Padecimientos preexistentes con periodo de espera
 GC.035. Prótesis
@@ -341,7 +339,6 @@ GC.022. Aviación particular
 GC.024. Hernias
 GC.025. Cirugía de nariz y senos paranasales
 GC.029. Trasplante de órganos
-GC.032. Circuncisión
 GC.033. Cobertura de daño psiquiátrico
 GC.034. Padecimientos preexistentes con periodo de espera
 GC.035. Prótesis
@@ -418,7 +415,6 @@ GC.022. Aviación particular
 GC.024. Hernias
 GC.025. Cirugía de nariz y senos paranasales
 GC.029. Trasplante de órganos
-GC.032. Circuncisión
 GC.033. Cobertura de daño psiquiátrico
 GC.034. Padecimientos preexistentes con periodo de espera
 GC.035. Prótesis
