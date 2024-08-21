@@ -89,7 +89,7 @@ PE.004.  Legrado por aborto
 PE.027.  Recién nacido sano
 PG.007.  Honorarios por consulta y procedimientos quirúrgicos
 PG.019.  Congénitos y Malformaciones 
-PG.021   Maternidad
+PG.021.   Maternidad
 PG.024.  Talla Baja
 PG.025.  Cirugía de nariz y senos paranasales
 PO.005.  Corrección de la vista
