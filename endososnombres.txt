@@ -122,7 +122,6 @@ GC.063.	 Cobertura de enfermedad crónica
 GC.064.	 Cobertura de enfermedad crónica
 GC.065.	 Cobertura de enfermedad crónica
 GO.002.	 Razón social del contratante
-MA.001.  Modificación de Monto de Deducible y Coaseguro
 MC.016.	 Movimientos de asegurados autoadministrada (inicio vs renovación)
 MC.021.	 Pago de complementos anteriores
 MD.001.	 Accidente
@@ -279,7 +278,6 @@ GC.063. Cobertura de enfermedad crónica
 GC.064. Cobertura de enfermedad crónica
 GC.065. Cobertura de enfermedad crónica
 GO.002. Razón social del contratante
-MA.001. Modificación de Monto de Deducible y Coaseguro
 MC.016. Movimientos de asegurados autoadministrada (inicio vs renovación)
 MC.021. Pago de complementos anteriores
 MD.001. Accidente
@@ -358,7 +356,6 @@ GC.063. Cobertura de enfermedad crónica
 GC.064. Cobertura de enfermedad crónica
 GC.065. Cobertura de enfermedad crónica
 GO.002. Razón social del contratante
-MA.001. Modificación de Monto de Deducible y Coaseguro
 MC.016. Movimientos de asegurados autoadministrada (inicio vs renovación)
 MC.021. Pago de complementos anteriores
 MD.001. Accidente
