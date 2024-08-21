@@ -51,10 +51,18 @@ if st.sidebar.button("Reiniciar"):
   st.session_state.analysis_loaded = False
   st.session_state.saludo_enviado = False  # Reiniciar el estado del saludo
 
-# Leer el archivo de endosos
-endosos_df = pd.read_table('endososnombres.json', header=None, names=['codigo', 'nombre'])
-endosos_dict = dict(zip(endosos_df['codigo'], endosos_df['nombre']))
+import json
 
+# Leer el archivo JSON de endosos
+try:
+    with open('endososnombres.json', 'r', encoding='utf-8') as f:
+        endosos_dict = json.load(f)
+except FileNotFoundError:
+    st.error("El archivo endososnombres.json no se pudo encontrar.")
+    endosos_dict = {}  # Establecer un diccionario vacío si no se encuentra el archivo
+except json.JSONDecodeError:
+    st.error("El archivo endososnombres.json tiene un error de formato.")
+    endosos_dict = {}  # Establecer un diccionario vacío si hay un error en la lectura
 # Mostrar la sección de comparación de archivos solo si se han subido ambos archivos
 if archivo_subido_1 and archivo_subido_2:
    
