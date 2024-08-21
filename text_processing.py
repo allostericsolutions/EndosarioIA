@@ -49,6 +49,7 @@ def extract_and_clean_text(pdf_path):
         r'A\s*OTROS\s*FRANJA\s*FRONTERIZA',
         r'RAZON\s*SOCIAL\s*DEL\s*CONTRATANTE',
         r'A\s*OTROS\s*CONVERSION\s*INDIVIDUAL\s*PARA\s*EL\s*SUBGRUPO1',
+        r'CONVERSION\s*INDIVIDUAL\s*CON\s*PAGO\s*DE\s*COMPLEMENTOS',
         r'A\s*GASTOS\s*CUBIERTOS\s*HERNIAS',
         r'A\s*GASTOS\s*CUBIERTOS\s*COBERTURA\s*DE\s*DAO\s*PSIQUIATRICO',
         r'A\s*GASTOS\s*CUBIERTOS\s*CIRCUNCISION',
