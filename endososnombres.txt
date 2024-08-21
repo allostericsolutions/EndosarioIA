@@ -1,19 +1,19 @@
-CG.004.Cancelación Póliza
-GC.021.Parto/Cesárea
-GC.022.Aviación particular
-GC.024.Hernias
-GC.025.Cirugía de nariz y senos paranasales
-GC.029.Trasplante de órganos
-GC.032.Circuncisión
-GC.033.Cobertura de daño psiquiátrico
-GC.034.Padecimientos preexistentes con periodo de espera
-GC.035.Prótesis
-GC.036.Tumores malignos
-GC.037.Diabetes
-GC.038.Prótesis
-GC.039.Cirugía plástica reconstructiva
-GC.040.Cirugía de columna
-GC.041.Cirugía de la vista
+CG.004. Cancelación Póliza
+GC.021. Parto/Cesárea
+GC.022. Aviación particular
+GC.024. Hernias
+GC.025. Cirugía de nariz y senos paranasales
+GC.029. Trasplante de órganos
+GC.032. Circuncisión
+GC.033. Cobertura de daño psiquiátrico
+GC.034. Padecimientos preexistentes con periodo de espera
+GC.035. Prótesis
+GC.036. Tumores malignos
+GC.037. Diabetes
+GC.038. Prótesis
+GC.039. Cirugía plástica reconstructiva
+GC.040. Cirugía de columna
+GC.041. Cirugía de la vista
 GC.042.Cirugía de la mano
 GC.044.Cirugía de la rodilla
 GC.045.Cirugía de la cadera
