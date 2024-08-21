@@ -68,6 +68,7 @@ MG.046.  Hospitalización de neonatos
 MG.057.  Estrabismo
 MO.001.  Cláusula de emergencia en el extranjero
 MT.003.  Litotripsias
+MT.068.  Medicina Hiperbárica
 MT.005.  Franja fronteriza
 MT.008.  Hallux valgus o juanetes
 MT.010.  Amigdalas y adenoides
