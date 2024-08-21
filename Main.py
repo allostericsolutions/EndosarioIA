@@ -52,7 +52,7 @@ if st.sidebar.button("Reiniciar"):
   st.session_state.saludo_enviado = False  # Reiniciar el estado del saludo
 
 # Leer el archivo de endosos
-endosos_df = pd.read_table('endososnombres.txt', header=None, names=['codigo', 'nombre'])
+endosos_df = pd.read_table('endososnombres.json', header=None, names=['codigo', 'nombre'])
 endosos_dict = dict(zip(endosos_df['codigo'], endosos_df['nombre']))
 
 # Mostrar la sección de comparación de archivos solo si se han subido ambos archivos
