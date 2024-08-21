@@ -89,8 +89,7 @@ PE.004.  Legrado por aborto
 PE.027.  Recién nacido sano
 PG.007.  Honorarios por consulta y procedimientos quirúrgicos
 PG.019.  Congénitos y Malformaciones 
-PG.021.   Maternidad
-PG.024.  Talla Baja
+PG.021.  Maternidad
 PG.025.  Cirugía de nariz y senos paranasales
 PO.005.  Corrección de la vista
 GC.022.	 Aviación particular
@@ -141,7 +140,6 @@ ME.023.	 Acupunturistas
 ME.038.	 Vitaminas y complementos alimenticios
 MG.006.	 Honorarios por consultas médicas
 MG.007.	 Honorarios médicos y/o quirúrgicos
-MG.011.	 Cobertura adicional de ambulancia aérea
 MG.013.	 Quiroprácticos
 MG.014.	 Homeópatas
 MG.020.	 Recién nacido prematuro
@@ -150,7 +148,6 @@ MG.029.	 Trasplante de órganos
 MG.032.	 Circuncisión
 MG.033.	 Cobertura de daño psiquiátrico
 MG.034.	 Padecimientos preexistentes con periodo de espera
-MG.046.	 Hospitalización de neonatos
 MG.057.	 Estrabismo
 MO.001.	 Cláusula de emergencia en el extranjero
 MT.003.	 Litotripsias
@@ -219,7 +216,6 @@ ME.023.	 Acupunturistas
 ME.038.	 Vitaminas y complementos alimenticios
 MG.006.	 Honorarios por consultas médicas
 MG.007.  Honorarios médicos y/o quirúrgicos
-MG.011.	 Cobertura adicional de ambulancia aérea
 MG.013.	 Quiroprácticos
 MG.014.	 Homeópatas
 MG.020.	 Recién nacido prematuro
@@ -229,7 +225,6 @@ MG.029.	 Trasplante de órganos
 MG.032.	 Circuncisión
 MG.033.	 Cobertura de daño psiquiátrico
 MG.034.	 Padecimientos preexistentes con periodo de espera
-MG.046.	 Hospitalización de neonatos
 MG.057.	 Estrabismo
 MO.001.	 Cláusula de emergencia en el extranjero
 MT.003.	 Litotripsias
@@ -241,7 +236,6 @@ MT.017.	 Lesiones pigmentarias y lunares
 MT.023.	 Acné
 MT.052.	 Conversión a individual
 MT.055.	 Padecimientos con periodo de espera
-MT.057.	 Estrabismo
 MT.064.	 Registro de condiciones generales
 OT.001.	 Endoso de continuidad de negocio por cancelación anticipada
 PA.002.	 Aplicación de deducible y coaseguro
@@ -303,7 +297,6 @@ ME.023. Acupunturistas
 ME.038. Vitaminas y complementos alimenticios
 MG.006. Honorarios por consultas médicas
 MG.007. Honorarios médicos y/o quirúrgicos
-MG.011. Cobertura adicional de ambulancia aérea
 MG.013. Quiroprácticos
 MG.014. Homeópatas
 MG.020. Recién nacido prematuro
@@ -314,7 +307,6 @@ MG.029. Trasplante de órganos
 MG.032. Circuncisión
 MG.033. Cobertura de daño psiquiátrico
 MG.034. Padecimientos preexistentes con periodo de espera
-MG.046. Hospitalización de neonatos
 MG.057. Estrabismo
 MO.001. Cláusula de emergencia en el extranjero
 MT.003. Litotripsias
@@ -326,7 +318,6 @@ MT.017. Lesiones pigmentarias y lunares
 MT.023. Acné
 MT.052. Conversión a individual
 MT.055. Padecimientos con periodo de espera
-MT.057. Estrabismo
 MT.064. Registro de condiciones generales
 OT.001. Endoso de continuidad de negocio por cancelación anticipada
 PA.002. Aplicación de deducible y coaseguro
@@ -335,7 +326,6 @@ PE.004. Legrado por aborto
 PE.027. Recién nacido sano
 PG.007. Honorarios por consulta y procedimientos quirúrgicos
 PG.019. Congénitos y Malformaciones 
-PG.024. Talla Baja
 PG.025. Cirugía de nariz y senos paranasales
 PO.005. Corrección de la vista
 GC.022. Aviación particular
@@ -386,7 +376,6 @@ ME.023. Acupunturistas
 ME.038. Vitaminas y complementos alimenticios
 MG.006. Honorarios por consultas médicas
 MG.007. Honorarios médicos y/o quirúrgicos
-MG.011. Cobertura adicional de ambulancia aérea
 MG.013. Quiroprácticos
 MG.014. Homeópatas
 MG.020. Recién nacido prematuro
@@ -395,7 +384,6 @@ MG.029. Trasplante de órganos
 MG.032. Circuncisión
 MG.033. Cobertura de daño psiquiátrico
 MG.034. Padecimientos preexistentes con periodo de espera
-MG.046. Hospitalización de neonatos
 MG.057. Estrabismo
 MO.001. Cláusula de emergencia en el extranjero
 MT.003. Litotripsias
@@ -463,7 +451,6 @@ ME.023. Acupunturistas
 ME.038. Vitaminas y complementos alimenticios
 MG.006. Honorarios por consultas médicas
 MG.007. Honorarios médicos y/o quirúrgicos
-MG.011. Cobertura adicional de ambulancia aérea
 MG.013. Quiroprácticos
 MG.014. Homeópatas
 MG.020. Recién nacido prematuro
@@ -473,7 +460,6 @@ MG.029. Trasplante de órganos
 MG.032. Circuncisión
 MG.033. Cobertura de daño psiquiátrico
 MG.034. Padecimientos preexistentes con periodo de espera
-MG.046. Hospitalización de neonatos
 MG.057. Estrabismo
 MO.001. Cláusula de emergencia en el extranjero
 MT.003. Litotripsias
@@ -485,7 +471,6 @@ MT.017. Lesiones pigmentarias y lunares
 MT.023. Acné
 MT.052. Conversión a individual
 MT.055. Padecimientos con periodo de espera
-MT.057. Estrabismo
 MT.064. Registro de condiciones generales
 OT.001. Endoso de continuidad de negocio por cancelación anticipada
 PA.002. Aplicación de deducible y coaseguro
