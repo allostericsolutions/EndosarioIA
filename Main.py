@@ -21,7 +21,7 @@ from file_utils.sidebar_utils import mostrar_readme  # Importar la función desd
 client = initialize_openai()
 
 # Configurar los parámetros de la página, incluyendo el nuevo icono
-st.set_page_config(page_title="Endosario Móvil AI 2.2", page_icon="ícono robot.png")
+st.set_page_config(page_title="Endosario Móvil AI 2.2", page_icon="Allosteric_Solutions.png")
 
 # Título de la aplicación en la página principal
 st.title("Endosario Móvil AI 2.2")
