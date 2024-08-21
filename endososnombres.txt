@@ -42,6 +42,7 @@ MD.007.  Razón social del contratante
 MD.018.  Exclusión prestadores de servicios médicos no reconocidos, fuera de convenio
 MD.019.  Exclusiones de prestadores de servicios médicos no reconocidos
 MD.029.  Periodo de gracia
+ME.005.  Hormona del crecimiento
 ME.007.  Alcoholismo y/o toxicomanía
 ME.011.  Menopausia
 ME.015.  Asalto
