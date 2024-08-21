@@ -14,6 +14,7 @@ from file_utils.file_creators import create_excel, create_csv, create_txt
 from file_utils.image_utils import mostrar_imagen
 from gpt_config.openai_setup import initialize_openai
 from file_utils.text_processing.text_processing import preprocess_text, calculate_semantic_similarity, extract_and_align_numbers_with_context, calculate_numbers_similarity
+from file_utils.text_processing.pdf_utils import subir_archivos, verificar_archivos  # Importar las funciones desde pdf_utils
 
 # Inicializar las configuraciones de OpenAI
 client = initialize_openai()
@@ -33,20 +34,10 @@ with st.sidebar.expander("Información", expanded=True):
   mostrar_imagen(image_path, caption, width)
 
 # Subir los dos archivos PDF
-uploaded_file_1 = st.file_uploader("PEI", type=["pdf"], key="uploader1")
-uploaded_file_2 = st.file_uploader("Metlife", type=["pdf"], key="uploader2")
-
-# Variables para manejar el estado de los archivos subidos
-archivo_subido_1 = False
-archivo_subido_2 = False
+uploaded_file_1, uploaded_file_2 = subir_archivos()
 
 # Verificar si los archivos han sido subidos y extraer el texto
-if uploaded_file_1:
-  archivo_subido_1 = True
-  text_by_code_1, unique_code_count_1, codes_model = extract_and_clean_text(uploaded_file_1)
-if uploaded_file_2:
-  archivo_subido_2 = True
-  text_by_code_2, unique_code_count_2, _ = extract_and_clean_text(uploaded_file_2)
+archivo_subido_1, archivo_subido_2, text_by_code_1, unique_code_count_1, codes_model, text_by_code_2, unique_code_count_2 = verificar_archivos(uploaded_file_1, uploaded_file_2)
 
 # Botón para reiniciar la aplicación
 if st.sidebar.button("Reiniciar"):
@@ -54,7 +45,9 @@ if st.sidebar.button("Reiniciar"):
   archivo_subido_2 = False
   st.session_state.chat_history = []
   st.session_state.analysis_loaded = False
-  st.session_state.saludo_enviado = False # Reiniciar el estado del saludo
+  st.session_state.saludo_enviado = False  # Reiniciar el estado del saludo
+
+# Resto de tu código (sin cambios)...
 
 # Leer el archivo de endosos
 endosos_df = pd.read_table('endososnombres.txt', header=None, names=['codigo', 'nombre'])
@@ -226,7 +219,7 @@ if archivo_subido_1 and archivo_subido_2:
   if selected_code and st.session_state.get("last_selected_code") != selected_code:
     st.session_state.chat_history = []
     st.session_state.last_selected_code = selected_code
-    st.session_state.saludo_enviado = False # Reiniciar el estado del saludo
+    st.session_state.saludo_enviado = False  # Reiniciar el estado del saludo
 
   if selected_code:
     # Sección para el chat con GPT para cargar el análisis de documentos
@@ -247,7 +240,7 @@ if archivo_subido_1 and archivo_subido_2:
     info_analisis = {
       "texto_modelo": texto_modelo_con_codigo,
       "texto_verificacion": texto_verificacion_con_codigo,
-      "fila_comparacion": "", # No se necesita en este caso
+      "fila_comparacion": "",  # No se necesita en este caso
     }
     prompt_final = prompt_base.format(**info_analisis)
 
@@ -263,7 +256,7 @@ if archivo_subido_1 and archivo_subido_2:
     # Botón para limpiar la conversación colocado en la barra lateral
     if st.sidebar.button("Limpiar Conversación"):
       st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
-      st.session_state.saludo_enviado = False # Reiniciar el estado del saludo
+      st.session_state.saludo_enviado = False  # Reiniciar el estado del saludo
 
     # Mostrar la ventana de chat excluyendo el prompt del sistema
     for idx, message in enumerate(st.session_state.chat_history[1:]):
@@ -291,9 +284,10 @@ if archivo_subido_1 and archivo_subido_2:
       # Mostrar la respuesta en la ventana de chat
       with st.chat_message("assistant"):
         st.write(response.choices[0].message.content)
+
 # Aprendamos a leer, aunque sea un libro. 
 with st.sidebar:
-  with st.expander("README"): # Crea la pestaña "README"
+  with st.expander("README"):  # Crea la pestaña "README"
     st.markdown("---")
     st.markdown("***")
     st.markdown("### Un fragmento del Quijote:")
