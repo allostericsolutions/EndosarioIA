@@ -59,6 +59,7 @@ def extract_and_clean_text(pdf_path):
         r'A\s*GASTOS\s*CUBIERTOS\s*HONORARIOS\s*POR\s*CONSULTAS\s*MEDICAS',
         r'A\s*OTROS\s*LITOTRIPSIAS',
         r'A\s*EXCLUSIONES\s*RECIEN\s*NACIDO\s*SANO',
+        r'ATENCIÓN\s* MÉDICA\s*EN\s*CASA',
         r'A\s*OTROS\s*COLUMNA',
         r'O\s*JUANETES',
         r'ACCIDENTE',
