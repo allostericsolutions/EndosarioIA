@@ -1,10 +1,10 @@
-CG.004. Cancelación Póliza
-GC.021. Parto/Cesárea
-GC.022. Aviación particular
-GC.024. Hernias
-GC.025. Cirugía de nariz y senos paranasales
-GC.029. Trasplante de órganos
-GC.032. Circuncisión
+CG.004.  Cancelación Póliza
+GC.021.  Parto/Cesárea
+GC.022.  Aviación particular
+GC.024.  Hernias
+GC.025.  Cirugía de nariz y senos paranasales
+GC.029.  Trasplante de órganos
+GC.032.  Circuncisión
 GC.033. Cobertura de daño psiquiátrico
 GC.034. Padecimientos preexistentes con periodo de espera
 GC.035. Prótesis
@@ -62,7 +62,7 @@ MG.026. Prótesis dentales/Maxilofaciales
 MG.029. Trasplante de órganos
 MG.032. Circuncisión
 MG.033. Cobertura de daño psiquiátrico
-MG.034. Padecimientos preexistentes con periodo de espera
+MG.034.  Padecimientos preexistentes con periodo de espera
 MG.046. Hospitalización de neonatos
 MG.057. Estrabismo
 MO.001. Cláusula de emergencia en el extranjero
