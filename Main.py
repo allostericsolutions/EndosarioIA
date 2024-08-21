@@ -15,6 +15,7 @@ from file_utils.image_utils import mostrar_imagen
 from gpt_config.openai_setup import initialize_openai
 from file_utils.text_processing.text_processing import preprocess_text, calculate_semantic_similarity, extract_and_align_numbers_with_context, calculate_numbers_similarity
 from file_utils.text_processing.pdf_utils import subir_archivos, verificar_archivos  # Importar las funciones desde pdf_utils
+from file_utils.sidebar_utils import mostrar_readme  # Importar la función desde sidebar_utils
 
 # Inicializar las configuraciones de OpenAI
 client = initialize_openai()
@@ -33,6 +34,9 @@ with st.sidebar.expander("Información", expanded=True):
   width = 300
   mostrar_imagen(image_path, caption, width)
 
+# Mostrar el README en la barra lateral
+mostrar_readme()
+
 # Subir los dos archivos PDF
 uploaded_file_1, uploaded_file_2 = subir_archivos()
 
@@ -46,8 +50,6 @@ if st.sidebar.button("Reiniciar"):
   st.session_state.chat_history = []
   st.session_state.analysis_loaded = False
   st.session_state.saludo_enviado = False  # Reiniciar el estado del saludo
-
-# Resto de tu código (sin cambios)...
 
 # Leer el archivo de endosos
 endosos_df = pd.read_table('endososnombres.txt', header=None, names=['codigo', 'nombre'])
@@ -234,7 +236,7 @@ if archivo_subido_1 and archivo_subido_2:
 
     # Incluir el código en los textos antes de enviarlos para análisis
     texto_modelo_con_codigo = f"Código: {selected_code}\n\n{texto_modelo}"
-    texto_verificacion_con_codigo = f"Código: {selected_code}\n\n{texto_verificacion}"
+    texto_verificacion_con_codigo = f"Código: {selected_code}\n\n{texto_verificacion}")
 
     # Crear el prompt inicial con el texto de los documentos y el código
     info_analisis = {
@@ -284,19 +286,3 @@ if archivo_subido_1 and archivo_subido_2:
       # Mostrar la respuesta en la ventana de chat
       with st.chat_message("assistant"):
         st.write(response.choices[0].message.content)
-
-# Aprendamos a leer, aunque sea un libro. 
-with st.sidebar:
-  with st.expander("README"):  # Crea la pestaña "README"
-    st.markdown("---")
-    st.markdown("***")
-    st.markdown("### Un fragmento del Quijote:")
-    st.markdown(
-      "> *Y al fin, Sancho, dijo don Quijote, acuérdate de lo que te he dicho siempre: la virtud es su propia recompensa, y los que la siguen nunca quedan sin ella.*",
-      unsafe_allow_html=True,
-    )
-    st.markdown(
-      "<font size='1'><i>(Don Quijote de la Mancha, Parte II)</i></font>",
-      unsafe_allow_html=True,
-    )
-    st.markdown("***")
