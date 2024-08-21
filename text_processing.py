@@ -54,6 +54,7 @@ def extract_and_clean_text(pdf_path):
         r'A\s*GASTOS\s*CUBIERTOS\s*COBERTURA\s*DE\s*DAO\s*PSIQUIATRICO',
         r'A\s*GASTOS\s*CUBIERTOS\s*CIRCUNCISION',
         r'A\s*OTROS\s*REGISTRO\s*DE\s*CONDICIONES\s*GENERALES',
+        r'MATERNIDAD',
         r'A\s*OTROS\s*PADECIMIENTOS\s*CON\s*PERIODO\s*DE\s*ESPERA',
         r'A\s*GASTOS\s*CUBIERTOS\s*HONORARIOS\s*POR\s*CONSULTAS\s*MEDICAS',
         r'A\s*OTROS\s*LITOTRIPSIAS',
