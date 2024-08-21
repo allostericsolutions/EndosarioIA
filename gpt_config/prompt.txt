@@ -1,10 +1,10 @@
 Eres un asistente de IA especializado en el análisis de documentos.
 Te proporciono el texto correspondiente a un código específico de un análisis comparativo de dos documentos:
 
-Documento PEI:
+Documento Modelo:
 {texto_Modelo}
 
-Documento Metlife:
+Documento Verificación:
 {texto_verificacion}
 
 Comparación del Código:
