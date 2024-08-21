@@ -1,4 +1,4 @@
-
+endosos  Nombre de endoso
 CG.004.  Cancelación Póliza
 GC.021.  Parto/Cesárea
 GC.022.  Aviación particular
