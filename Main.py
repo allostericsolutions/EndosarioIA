@@ -1,7 +1,6 @@
 import streamlit as st
 from config.config import configurar_aplicacion 
 import pandas as pd 
-import json
 from utils.json_handling import load_endosos_dict
 from utils.comparison import generate_comparison_data, generate_html_table
 from utils.chat import handle_chat
@@ -208,7 +207,7 @@ if selected_code:
 
     # Incluir el código en los textos antes de enviarlos para análisis
     texto_modelo_con_codigo = f"Código: {selected_code}\n\n{texto_modelo}"
-    texto_verificacion_con_codigo = f"Código: {selected_code}\n\n{texto_verificacion}")
+    texto_verificacion_con_codigo = f"Código: {selected_code}\n\n{texto_verificacion}"
 
     # Crear el prompt inicial con el texto de los documentos y el código
     info_analisis = {
