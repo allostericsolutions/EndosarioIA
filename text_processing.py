@@ -147,6 +147,8 @@ def extract_and_clean_text(pdf_path):
         r'MENOPAUSIA',
         r'FRANJA\s*FRONTERIZA',
         r'COBERTURA\s*DE\s*DAÑO\s*PSIQUIATRICO',
+        r'MODIFICACIONES\s*A\s*GASTOS\s*CUBIERTOS',  # Agregado
+        r'HONORARIOS\s*POR\s*CONSULTA\s*Y\s*PROCEDIMIENTOS\s*QUIRURGICOS'  # Agregado
     ]
 
     # Eliminar patrones en mayúsculas
@@ -167,7 +169,7 @@ def extract_and_clean_text(pdf_path):
 
     for paragraph in paragraphs:
         code_match = re.search(code_pattern, paragraph)
-        if code_match:
+        if (code_match):
             current_code = code_match.group(0)
             # Aquí se elimina el código del párrafo
             paragraph = re.sub(code_pattern, '', paragraph).strip()
