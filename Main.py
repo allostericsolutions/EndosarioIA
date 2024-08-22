@@ -200,81 +200,81 @@ if archivo_subido_1 and archivo_subido_2:
     with open("gpt_config/prompt.txt", "r") as f:
         prompt_base = f.read()
 
-   # Verificación mediante impresión del prompt cargado
-print(f"prompt_base: {prompt_base}")
+    # Verificación mediante impresión del prompt cargado
+    print(f"prompt_base: {prompt_base}")
 
-# Obtener códigos comunes a ambos documentos
-filtered_codes = list(set(text_by_code_1.keys()) & set(text_by_code_2.keys()))
+    # Obtener códigos comunes a ambos documentos
+    filtered_codes = list(set(text_by_code_1.keys()) & set(text_by_code_2.keys()))
 
-# Filtro de códigos para la selección en la interfaz
-selected_code = st.selectbox("Selecciona un código:", filtered_codes, key="selected_code")
+    # Filtro de códigos para la selección en la interfaz
+    selected_code = st.selectbox("Selecciona un código:", filtered_codes, key="selected_code")
 
-# Limpiar conversación del chat al seleccionar un nuevo código
-if selected_code and st.session_state.get("last_selected_code") != selected_code:
-    st.session_state.chat_history = []
-    st.session_state.last_selected_code = selected_code
-    st.session_state.saludo_enviado = False  # Reiniciar el estado del saludo
-
-if selected_code:
-    # Sección para el chat con GPT para cargar el análisis de documentos
-    st.markdown("### Cargar Análisis de Documentos")
-
-    # Mostrar los textos filtrados de forma oculta
-    texto_PEI = text_by_code_1.get(selected_code, "Ausente")
-    texto_Metlife = text_by_code_2.get(selected_code, "Ausente")
-    with st.expander("Mostrar Textos Filtrados"):
-        st.markdown(f"**Documento PEI:** {texto_PEI}")
-        st.markdown(f"**Documento Metlife:** {texto_Metlife}")
-
-    # Incluir el código en los textos antes de enviarlos para análisis
-    texto_PEI_con_codigo = f"Código: {selected_code}\n\n{texto_PEI}"
-    texto_Metlife_con_codigo = f"Código: {selected_code}\n\n{texto_Metlife}"
-
-    # Crear el prompt inicial con el texto de los documentos y el código
-    info_analisis = {
-        "texto_PEI": texto_PEI_con_codigo,
-        "texto_Metlife": texto_Metlife_con_codigo,
-        "fila_comparacion": ""  # No se necesita en este caso
-    }
-    prompt_final = prompt_base.format(**info_analisis)
-
-    # Iniciar el chat para cargar el análisis
-    if st.button("Enviar para Análisis"):
-        st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
-        st.session_state.analysis_loaded = True
-
-# Verificar si el análisis ha sido cargado
-if st.session_state.analysis_loaded:
-    st.markdown("### Interactuar con InteresseAssist Bot")
-
-    # Botón para limpiar la conversación colocado en la barra lateral
-    if st.sidebar.button("Limpiar Conversación"):
-        st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
+    # Limpiar conversación del chat al seleccionar un nuevo código
+    if selected_code and st.session_state.get("last_selected_code") != selected_code:
+        st.session_state.chat_history = []
+        st.session_state.last_selected_code = selected_code
         st.session_state.saludo_enviado = False  # Reiniciar el estado del saludo
 
-    # Mostrar la ventana de chat excluyendo el prompt del sistema
-    for idx, message in enumerate(st.session_state.chat_history[1:]):
-        with st.chat_message(message["role"]):
-            st.write(message["content"])
+    if selected_code:
+        # Sección para el chat con GPT para cargar el análisis de documentos
+        st.markdown("### Cargar Análisis de Documentos")
 
-    # Obtener la pregunta del usuario
-    if prompt := st.chat_input("Haz tu pregunta:"):
-        # Agregar la pregunta al historial de chat
-        st.session_state.chat_history.append({"role": "user", "content": prompt})
+        # Mostrar los textos filtrados de forma oculta
+        texto_modelo = text_by_code_1.get(selected_code, "Ausente")
+        texto_verificacion = text_by_code_2.get(selected_code, "Ausente")
+        with st.expander("Mostrar Textos Filtrados"):
+            st.markdown(f"**Documento PEI:** {texto_modelo}")
+            st.markdown(f"**Documento Metlife:** {texto_verificacion}")
 
-        # Llamar a gpt-4o-mini con el historial de chat actualizado
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=st.session_state.chat_history,
-            max_tokens=1200,
-            temperature=0.2,
-        )
+        # Incluir el código en los textos antes de enviarlos para análisis
+        texto_modelo_con_codigo = f"Código: {selected_code}\n\n{texto_modelo}"
+        texto_verificacion_con_codigo = f"Código: {selected_code}\n\n{texto_verificacion}"
 
-        # Agregar la respuesta al historial de chat
-        st.session_state.chat_history.append(
-            {"role": "assistant", "content": response.choices[0].message.content}
-        )
+        # Crear el prompt inicial con el texto de los documentos y el código
+        info_analisis = {
+            "texto_modelo": texto_modelo_con_codigo,
+            "texto_verificacion": texto_verificacion_con_codigo,
+            "fila_comparacion": ""  # No se necesita en este caso
+        }
+        prompt_final = prompt_base.format(**info_analisis)
 
-        # Mostrar la respuesta en la ventana de chat
-        with st.chat_message("assistant"):
-            st.write(response.choices[0].message.content)
+        # Iniciar el chat para cargar el análisis
+        if st.button("Enviar para Análisis"):
+            st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
+            st.session_state.analysis_loaded = True
+
+    # Verificar si el análisis ha sido cargado
+    if st.session_state.analysis_loaded:
+        st.markdown("### Interactuar con InteresseAssist Bot")
+
+        # Botón para limpiar la conversación colocado en la barra lateral
+        if st.sidebar.button("Limpiar Conversación"):
+            st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
+            st.session_state.saludo_enviado = False  # Reiniciar el estado del saludo
+
+        # Mostrar la ventana de chat excluyendo el prompt del sistema
+        for idx, message in enumerate(st.session_state.chat_history[1:]):
+            with st.chat_message(message["role"]):
+                st.write(message["content"])
+
+        # Obtener la pregunta del usuario
+        if prompt := st.chat_input("Haz tu pregunta:"):
+            # Agregar la pregunta al historial de chat
+            st.session_state.chat_history.append({"role": "user", "content": prompt})
+
+            # Llamar a gpt-4o-mini con el historial de chat actualizado
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=st.session_state.chat_history,
+                max_tokens=1200,
+                temperature=0.2,
+            )
+
+            # Agregar la respuesta al historial de chat
+            st.session_state.chat_history.append(
+                {"role": "assistant", "content": response.choices[0].message.content}
+            )
+
+            # Mostrar la respuesta en la ventana de chat
+            with st.chat_message("assistant"):
+                st.write(response.choices[0].message.content)
