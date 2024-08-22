@@ -25,15 +25,7 @@ if st.sidebar.button("Reiniciar"):
     st.session_state.saludo_enviado = False
 
 # Leer el archivo JSON de endosos
-try:
-    with open('endososnombres.json', 'r', encoding='utf-8') as f:
-        endosos_dict = json.load(f)
-except FileNotFoundError:
-    st.error("El archivo endososnombres.json no se pudo encontrar.")
-    endosos_dict = {} # Establecer un diccionario vacío si no se encuentra el archivo
-except json.JSONDecodeError:
-    st.error("El archivo endososnombres.json tiene un error de formato.")
-    endosos_dict = {} # Establecer un diccionario vacío si hay un error en la lectura
+endosos_dict = load_endosos_dict()
 
 # Mostrar la sección de comparación de archivos solo si se han subido ambos archivos
 if archivo_subido_1 and archivo_subido_2:
@@ -216,7 +208,7 @@ if selected_code:
 
     # Incluir el código en los textos antes de enviarlos para análisis
     texto_modelo_con_codigo = f"Código: {selected_code}\n\n{texto_modelo}"
-    texto_verificacion_con_codigo = f"Código: {selected_code}\n\n{texto_verificacion}"
+    texto_verificacion_con_codigo = f"Código: {selected_code}\n\n{texto_verificacion}")
 
     # Crear el prompt inicial con el texto de los documentos y el código
     info_analisis = {
