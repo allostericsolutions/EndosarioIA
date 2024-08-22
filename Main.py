@@ -200,8 +200,8 @@ if archivo_subido_1 and archivo_subido_2:
     with open("gpt_config/prompt.txt", "r") as f:
         prompt_base = f.read()
 
-    # Verificación del prompt cargado
-    print(f"prompt_base: {prompt_base}")
+    # Verificación del prompt cargado lo dsactivo por ahora. 
+    #print(f"prompt_base: {prompt_base}")
 
     # Obtener códigos comunes a ambos documentos
     filtered_codes = list(set(text_by_code_1.keys()) & set(text_by_code_2.keys()))
