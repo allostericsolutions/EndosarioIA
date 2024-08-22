@@ -1,15 +1,31 @@
 import streamlit as st
-from config.config import configurar_aplicacion
-from file_processing.file_processing import manejar_archivos
-from comparison.comparison import comparar_documentos, generate_html_table
-from download_files.download_files import mostrar_botones_descarga
-from chat.chat import manejar_chat
+from config.config import configurar_aplicacion  # Ajuste para importar la función desde config/config.py
+from pdfminer.high_level import extract_text
+from fpdf import FPDF
+import pandas as pd
+import io
+import re
+import difflib
+from PIL import Image
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+from openpyxl.utils.exceptions import IllegalCharacterError
+from text_processing import extract_and_clean_text
+from file_utils.file_creators import create_excel, create_csv, create_txt
+from file_utils.image_utils import mostrar_imagen
+from gpt_config.openai_setup import initialize_openai
+from file_utils.text_processing.text_processing import preprocess_text, calculate_semantic_similarity, extract_and_align_numbers_with_context, calculate_numbers_similarity
+from file_utils.text_processing.pdf_utils import subir_archivos, verificar_archivos  # Importar las funciones desde pdf_utils
+from file_utils.sidebar_utils import mostrar_readme  # Importar la función desde sidebar_utils
 
 # Inicializar las configuraciones de OpenAI
 client = configurar_aplicacion()
 
 # Subir los dos archivos PDF
-archivo_subido_1, archivo_subido_2, text_by_code_1, unique_code_count_1, codes_model, text_by_code_2, unique_code_count_2 = manejar_archivos()
+uploaded_file_1, uploaded_file_2 = subir_archivos()
+
+# Verificar si los archivos han sido subidos y extraer el texto
+archivo_subido_1, archivo_subido_2, text_by_code_1, unique_code_count_1, codes_model, text_by_code_2, unique_code_count_2 = verificar_archivos(uploaded_file_1, uploaded_file_2)
 
 # Botón para reiniciar la aplicación
 if st.sidebar.button("Reiniciar"):
@@ -94,6 +110,33 @@ if archivo_subido_1 and archivo_subido_2:
     comparison_df = pd.DataFrame(comparison_data)
 
     # Generar HTML para la tabla con estilización CSS
+    def generate_html_table(df):
+        html = df.to_html(index=False, escape=False, render_links=True)
+        html = html.replace(
+            '<table border="1" class="dataframe">',
+            '<table border="1" class="dataframe" style="width:100%; border-collapse:collapse;">'
+        ).replace(
+            '<thead>',
+            '<thead style="position: sticky; top: 0; z-index: 1; background: #fff;">'
+        ).replace(
+            '<th>',
+            '<th class="fixed-width" style="background-color:#f2f2f2; padding:10px; text-align:left; z-index: 1;">'
+        ).replace(
+            '<td>',
+            '<td class="fixed-width" style="border:1px solid black; padding:10px; text-align:left; vertical-align:top;">'
+        )
+        # Aplica estilos a "Documento PEI" y "Documento Metlife"
+        html = html.replace(
+            '<th>Documento PEI</th>',
+            '<th style="font-size: 20px; font-weight: bold;">Documento PEI</th>'
+        )
+        html = html.replace(
+            '<th>Documento Metlife</th>',
+            '<th style="font-size: 20px; font-weight: bold;">Documento Metlife</th>'
+        )
+        return html
+
+    # Convertir DataFrame a HTML con estilización CSS y HTML modificado
     table_html = generate_html_table(comparison_df)
     st.markdown("### Comparación de Documentos")
     st.markdown(table_html, unsafe_allow_html=True)
@@ -104,7 +147,37 @@ if archivo_subido_1 and archivo_subido_2:
     st.write(f"**Documento Metlife:** {unique_code_count_2} (Faltan: {', '.join(list(all_codes - set(text_by_code_2.keys())))})")
 
     # Botones para descargar los archivos de comparación en diferentes formatos
-    mostrar_botones_descarga(comparison_df, unique_code_count_1, unique_code_count_2)
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        download_excel = st.button("Download Comparison Excel")
+        if download_excel:
+            excel_buffer = create_excel(comparison_df)
+            st.download_button(
+                label="Descarga Excel",
+                data=excel_buffer,
+                file_name="comparison.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
+    with col2:
+        download_csv = st.button("Download Comparison CSV")
+        if download_csv:
+            csv_buffer = create_csv(comparison_df)
+            st.download_button(
+                label="Descarga CSV",
+                data=csv_buffer,
+                file_name="comparison.csv",
+                mime="text/csv"
+            )
+    with col3:
+        download_txt = st.button("Download Comparison TXT")
+        if download_txt:
+            txt_buffer = create_txt(comparison_df, unique_code_count_1, unique_code_count_2)
+            st.download_button(
+                label="Descarga TXT",
+                data=txt_buffer,
+                file_name="comparison.txt",
+                mime="text/plain"
+            )
 
     # --- Sección para la IA ---
     st.markdown("### InteresseAssist Bot")
