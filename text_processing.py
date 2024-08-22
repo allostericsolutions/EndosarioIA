@@ -148,7 +148,9 @@ def extract_and_clean_text(pdf_path):
         r'FRANJA\s*FRONTERIZA',
         r'COBERTURA\s*DE\s*DAÑO\s*PSIQUIATRICO',
         r'MODIFICACIONES\s*A\s*GASTOS\s*CUBIERTOS',  # Agregado
-        r'HONORARIOS\s*POR\s*CONSULTA\s*Y\s*PROCEDIMIENTOS\s*QUIRURGICOS'  # Agregado
+        r'HONORARIOS\s*POR\s*CONSULTA\s*Y\s*PROCEDIMIENTOS\s*QUIRURGICOS',  # Agregado
+        r'A\s*CLAUSULAS\s*GENERALES\s*MOVIMIENTOS\s*DE\s*ASEGURADOS\s*AUTOADMINISTRADA\s*\(INICIO\s*vs\s*RENOVACION\)',  # Agregado
+        r'POR\s*CONSULTA\s*Y\s*PROCEDIMIENTOS\s*QUIRURGICOS'  # Agregado
     ]
 
     # Eliminar patrones en mayúsculas
