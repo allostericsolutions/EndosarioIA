@@ -18,17 +18,14 @@ from file_utils.text_processing.text_processing import preprocess_text, calculat
 from file_utils.text_processing.pdf_utils import subir_archivos, verificar_archivos  # Importar las funciones desde pdf_utils
 from file_utils.sidebar_utils import mostrar_readme  # Importar la función desde sidebar_utils
 
-# Importar las funciones desde file_handling
-from file_utils.file_handling import initialize_files, verify_files
-
 # Inicializar las configuraciones de OpenAI
 client = configurar_aplicacion()
 
-# Subir los dos archivos PDF usando la función importada
-uploaded_file_1, uploaded_file_2 = initialize_files()
+# Subir los dos archivos PDF
+uploaded_file_1, uploaded_file_2 = subir_archivos()
 
-# Verificar si los archivos han sido subidos y extraer el texto usando la función importada
-archivo_subido_1, archivo_subido_2, text_by_code_1, unique_code_count_1, codes_model, text_by_code_2, unique_code_count_2 = verify_files(uploaded_file_1, uploaded_file_2)
+# Verificar si los archivos han sido subidos y extraer el texto
+archivo_subido_1, archivo_subido_2, text_by_code_1, unique_code_count_1, codes_model, text_by_code_2, unique_code_count_2 = verificar_archivos(uploaded_file_1, uploaded_file_2)
 
 # Botón para reiniciar la aplicación
 if st.sidebar.button("Reiniciar"):
@@ -182,69 +179,69 @@ if archivo_subido_1 and archivo_subido_2:
                 mime="text/plain"
             )
 
-# --- Sección para la IA ---
-st.markdown("### InteresseAssist Bot")
+    # --- Sección para la IA ---
+    st.markdown("### InteresseAssist Bot")
 
-# Inicializar el historial de chat en session_state
-if "chat_history" not in st.session_state:
-    st.session_state.chat_history = []
-if "analysis_loaded" not in st.session_state:
-    st.session_state.analysis_loaded = False
-if "saludo_enviado" not in st.session_state:
-    st.session_state.saludo_enviado = False
+    # Inicializar el historial de chat en session_state
+    if "chat_history" not in st.session_state:
+        st.session_state.chat_history = []
+    if "analysis_loaded" not in st.session_state:
+        st.session_state.analysis_loaded = False
+    if "saludo_enviado" not in st.session_state:
+        st.session_state.saludo_enviado = False
 
-# Simular el saludo si no ha sido enviado
-if not st.session_state.saludo_enviado:
-    st.session_state.chat_history.append({"role": "user", "content": "Hola"})
-    st.session_state.chat_history.append({"role": "assistant", "content": "Hola, soy InteresseAssist Bot. ¿En qué puedo ayudarte?"})
-    st.session_state.saludo_enviado = True
+    # Simular el saludo si no ha sido enviado
+    if not st.session_state.saludo_enviado:
+        st.session_state.chat_history.append({"role": "user", "content": "Hola"})
+        st.session_state.chat_history.append({"role": "assistant", "content": "Hola, soy InteresseAssist Bot. ¿En qué puedo ayudarte?"})
+        st.session_state.saludo_enviado = True
 
-# Cargar el prompt desde el archivo de configuración
-with open("gpt_config/prompt.txt", "r") as f:
-    prompt_base = f.read()
+    # Cargar el prompt desde el archivo de configuración
+    with open("gpt_config/prompt.txt", "r") as f:
+        prompt_base = f.read()
 
-# Verificación mediante impresión del prompt cargado
-print(f"prompt_base: {prompt_base}")
+    # Verificación mediante impresión del prompt cargado
+    print(f"prompt_base: {prompt_base}")
 
-# Obtener códigos comunes a ambos documentos
-filtered_codes = list(set(text_by_code_1.keys()) & set(text_by_code_2.keys()))
+    # Obtener códigos comunes a ambos documentos
+    filtered_codes = list(set(text_by_code_1.keys()) & set(text_by_code_2.keys()))
 
-# Filtro de códigos para la selección en la interfaz
-selected_code = st.selectbox("Selecciona un código:", filtered_codes, key="selected_code")
+    # Filtro de códigos para la selección en la interfaz
+    selected_code = st.selectbox("Selecciona un código:", filtered_codes, key="selected_code")
 
-# Limpiar conversación del chat al seleccionar un nuevo código
-if selected_code and st.session_state.get("last_selected_code") != selected_code:
-    st.session_state.chat_history = []
-    st.session_state.last_selected_code = selected_code
-    st.session_state.saludo_enviado = False  # Reiniciar el estado del saludo
+    # Limpiar conversación del chat al seleccionar un nuevo código
+    if selected_code and st.session_state.get("last_selected_code") != selected_code:
+        st.session_state.chat_history = []
+        st.session_state.last_selected_code = selected_code
+        st.session_state.saludo_enviado = False  # Reiniciar el estado del saludo
 
-if selected_code:
-    # Sección para el chat con GPT para cargar el análisis de documentos
-    st.markdown("### Cargar Análisis de Documentos")
+    if selected_code:
+        # Sección para el chat con GPT para cargar el análisis de documentos
+        st.markdown("### Cargar Análisis de Documentos")
 
-    # Mostrar los textos filtrados de forma oculta
-    texto_modelo = text_by_code_1.get(selected_code, "Ausente")
-    texto_verificacion = text_by_code_2.get(selected_code, "Ausente")
-    with st.expander("Mostrar Textos Filtrados"):
-        st.markdown(f"**Documento PEI:** {texto_modelo}")
-        st.markdown(f"**Documento Metlife:** {texto_verificacion}")
+        # Mostrar los textos filtrados de forma oculta
+        texto_modelo = text_by_code_1.get(selected_code, "Ausente")
+        texto_verificacion = text_by_code_2.get(selected_code, "Ausente")
+        with st.expander("Mostrar Textos Filtrados"):
+            st.markdown(f"**Documento PEI:** {texto_modelo}")
+            st.markdown(f"**Documento Metlife:** {texto_verificacion}")
 
-    # Incluir el código en los textos antes de enviarlos para análisis
-    texto_modelo_con_codigo = f"Código: {selected_code}\n\n{texto_modelo}"
-    texto_verificacion_con_codigo = f"Código: {selected_code}\n\n{texto_verificacion}"
+        # Incluir el código en los textos antes de enviarlos para análisis
+        texto_modelo_con_codigo = f"Código: {selected_code}\n\n{texto_modelo}"
+        texto_verificacion_con_codigo = f"Código: {selected_code}\n\n{texto_verificacion}"
 
-    # Crear el prompt inicial con el texto de los documentos y el código
-    info_analisis = {
-        "texto_modelo": texto_modelo_con_codigo,
-        "texto_verificacion": texto_verificacion_con_codigo,
-        "fila_comparacion": ""  # No se necesita en este caso
-    }
-    prompt_final = prompt_base.format(**info_analisis)
+        # Crear el prompt inicial con el texto de los documentos y el código
+        info_analisis = {
+            "texto_modelo": texto_modelo_con_codigo,
+            "texto_verificacion": texto_verificacion_con_codigo,
+            "fila_comparacion": ""  # No se necesita en este caso
+        }
+        prompt_final = prompt_base.format(**info_analisis)
 
-    # Iniciar el chat para cargar el análisis
-    if st.button("Enviar para Análisis"):
-        st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
-        st.session_state.analysis_loaded = True
+        # Iniciar el chat para cargar el análisis
+        if st.button("Enviar para Análisis"):
+            st.session_state.chat_history = [{"role": "system", "content": prompt_final}]
+            st.session_state.analysis_loaded = True
 
     # Verificar si el análisis ha sido cargado
     if st.session_state.analysis_loaded:
@@ -270,7 +267,7 @@ if selected_code:
                 model="gpt-4o-mini",
                 messages=st.session_state.chat_history,
                 max_tokens=1200,
-                temperatura=0.2,
+                temperature=0.2,
             )
 
             # Agregar la respuesta al historial de chat
