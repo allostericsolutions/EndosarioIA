@@ -1,5 +1,5 @@
 import streamlit as st
-from config.config import configurar_aplicacion  # Ajuste para importar la función desde config/config.py
+from config.config import configurar_aplicacion  # Importar la función para configurar la aplicación
 from pdfminer.high_level import extract_text
 from fpdf import FPDF
 import pandas as pd
@@ -15,8 +15,8 @@ from file_utils.file_creators import create_excel, create_csv, create_txt
 from file_utils.image_utils import mostrar_imagen
 from gpt_config.openai_setup import initialize_openai
 from file_utils.text_processing.text_processing import preprocess_text, calculate_semantic_similarity, extract_and_align_numbers_with_context, calculate_numbers_similarity
-from file_utils.text_processing.pdf_utils import subir_archivos, verificar_archivos  # Importar las funciones desde pdf_utils
-from file_utils.sidebar_utils import mostrar_readme  # Importar la función desde sidebar_utils
+from file_utils.text_processing.pdf_utils import subir_archivos, verificar_archivos  # Importar funciones para manejar PDFs
+from file_utils.sidebar_utils import mostrar_readme  # Importar función para mostrar el README
 
 # Inicializar las configuraciones de OpenAI
 client = configurar_aplicacion()
@@ -136,7 +136,7 @@ if archivo_subido_1 and archivo_subido_2:
         )
         return html
 
-    # Convertir DataFrame a HTML con estilización CSS y HTML modificado
+    # Convertir DataFrame a HTML con estilización CSS
     table_html = generate_html_table(comparison_df)
     st.markdown("### Comparación de Documentos")
     st.markdown(table_html, unsafe_allow_html=True)
@@ -200,7 +200,7 @@ if archivo_subido_1 and archivo_subido_2:
     with open("gpt_config/prompt.txt", "r") as f:
         prompt_base = f.read()
 
-    # Verificación mediante impresión del prompt cargado
+    # Verificación del prompt cargado
     print(f"prompt_base: {prompt_base}")
 
     # Obtener códigos comunes a ambos documentos
@@ -234,7 +234,7 @@ if archivo_subido_1 and archivo_subido_2:
         info_analisis = {
             "texto_modelo": texto_modelo_con_codigo,
             "texto_verificacion": texto_verificacion_con_codigo,
-            "fila_comparacion": ""  # No se necesita en este caso
+            "fila_comparacion": ""  # Este campo no se utiliza en este caso
         }
         prompt_final = prompt_base.format(**info_analisis)
 
