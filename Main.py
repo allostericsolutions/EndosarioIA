@@ -90,8 +90,8 @@ if archivo_subido_1 and archivo_subido_2:
         # Obtener el nombre del endoso
         nombre_endoso = endosos_dict.get(code, "NA")
 
-        # Imprimir el código y el nombre para verificar
-        print(f"Código: {code}, Nombre: {nombre_endoso}")
+        # Imprimir el código y el nombre para verificar Lo desactivé, parece que ya no lo necesito por ahora. 
+        #print(f"Código: {code}, Nombre: {nombre_endoso}")
 
         # Agregar los datos a la tabla comparativa
         row = {
