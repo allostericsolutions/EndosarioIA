@@ -17,6 +17,7 @@ from gpt_config.openai_setup import initialize_openai
 from file_utils.text_processing.text_processing import preprocess_text, calculate_semantic_similarity, extract_and_align_numbers_with_context, calculate_numbers_similarity
 from file_utils.text_processing.pdf_utils import subir_archivos, verificar_archivos  # Importar las funciones desde pdf_utils
 from file_utils.sidebar_utils import mostrar_readme  # Importar la función desde sidebar_utils
+from file_utils.file_handling import initialize_files, verify_files
 
 # Inicializar las configuraciones de OpenAI
 client = configurar_aplicacion()
